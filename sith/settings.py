@@ -28,7 +28,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'collect_static')
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS =[
-    'static',
+    #'static',
     'bower_components'
 ]
 
