@@ -16,6 +16,7 @@ test/*
 static/**
 bower_components
 /media
+/collect_static
 
 
 

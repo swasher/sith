@@ -1,0 +1,30 @@
+---
+
+# Create environment variables for development
+# Same variable must present on heroku
+
+- name: Set server type
+  lineinfile: dest=/etc/environment
+              line='SERVER_TYPE={{group_names[0]}}'
+  become: yes
+
+
+- name: Set secret key
+  lineinfile: dest=/etc/environment
+              line='SECRET_KEY={{secret_key}}'
+  become: yes
+
+- name: Set database name
+  lineinfile: dest=/etc/environment
+              line='DATABASE_NAME={{db_name}}'
+  become: yes
+
+- name: Set database user
+  lineinfile: dest=/etc/environment
+              line='DATABASE_USER={{db_user}}'
+  become: yes
+
+- name: Set database password
+  lineinfile: dest=/etc/environment
+              line='DATABASE_PASSWORD={{db_password}}'
+  become: yes
