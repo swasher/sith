@@ -1,0 +1,4 @@
+---
+- include: ensure_npm.yml
+- include: install_npm_packages.yml
+- include: install_bower_packages.yml

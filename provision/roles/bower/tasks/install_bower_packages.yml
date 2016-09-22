@@ -1,0 +1,5 @@
+---
+- name: Install dependencies via bower
+  bower: path={{project_root}}
+  tags: vagrant_skip
+

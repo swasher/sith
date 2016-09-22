@@ -1,0 +1,14 @@
+# Servers must be configured in ~/.ssh/config on master node for name resolving
+
+[development]
+#local:2222  ansible_connection=local
+default ansible_connection=local
+
+[production]
+production ansible_sudo_pass="{{production_sudo}}"
+
+[staging]
+staging ansible_sudo_pass="{{staging_sudo}}"
+
+[backup]
+backup

@@ -1,0 +1,30 @@
+---
+- name: Install git
+  apt: >
+    pkg={{item}}
+    state=installed
+    update-cache=yes
+    cache_valid_time={{ apt_cache_valid_time }}
+  with_items:
+    - git
+  become: yes
+
+- name: get git username
+  shell: git config --global --get user.name
+  register: git_user_name_result
+  changed_when: False
+  ignore_errors: yes
+
+- name: get git user email
+  shell: git config --global --get user.email
+  register: git_user_email_result
+  changed_when: False
+  ignore_errors: yes
+
+- name: set git username
+  shell: git config --global user.name "{{git_user_name}}"
+  when: git_user_email_result.stdout != "{{git_user_name}}"
+
+- name: set git user email
+  shell: git config --global user.email "{{git_user_email}}"
+  when: git_user_email_result.stdout != "{{git_user_email}}"

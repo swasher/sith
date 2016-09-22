@@ -1,0 +1,6 @@
+---
+postgresql_version: 9.4
+apt_cache_valid_time: 86400
+django_test_db_user: django
+django_test_db: test_sithdb
+pg_hba: /etc/postgresql/{{postgresql_version}}/main

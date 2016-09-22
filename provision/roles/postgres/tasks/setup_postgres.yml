@@ -1,0 +1,104 @@
+---
+- name: install dependicies
+  apt: >
+    pkg={{item}}
+    state=latest
+    update_cache=true
+    cache_valid_time={{ apt_cache_valid_time }}
+  with_items:
+    - python-apt
+    - python3-dev # for `pip install psycopg2`
+    - python-psycopg2 # for `pip install psycopg2`
+    - libpq-dev # for `pip install psycopg2`
+    - postgresql-{{postgresql_version}}
+  notify:
+    - restart postgres
+  become: yes
+
+
+- name: Exist direcrory for postgre configs
+  file: >
+    path=/etc/postgresql/{{postgresql_version}}/main/conf.d
+    state=directory
+  become: yes
+
+
+- name: Enable postgre's include dir
+  lineinfile: >
+    dest=/etc/postgresql/{{postgresql_version}}/main/postgresql.conf
+    line="include_dir = 'conf.d'"
+  become: yes
+
+
+- name: Setting up listen_addresses
+  lineinfile: >
+    dest=/etc/postgresql/{{postgresql_version}}/main/conf.d/listen.conf
+    line="listen_addresses = '*'"
+    state=present
+    create=yes
+  become: yes
+
+
+- name: Copy postgres pg_hba
+  template: >
+    src=pg_hba.conf.j2
+    dest={{pg_hba}}/pg_hba.conf
+  register: postgres_restart
+  become: yes
+
+- service: name=postgresql state=restarted
+  when: postgres_restart|changed
+  become: yes
+
+
+- name: ensure postgres start on boot
+  service: >
+    name=postgresql
+    state=started
+    enabled=yes
+  become: yes
+
+
+
+
+# ============= below is deprecated
+
+##
+## TODO There is potencially problem
+## - pg_hba.conf is not under ansible control, so YOU must look at this carefully
+##
+#- name: allow connection in pg_hba.conf - with password (md5) authentication
+#  lineinfile: >
+#    dest=/etc/postgresql/{{postgresql_version}}/main/pg_hba.conf
+#    line="host {{db_name}} {{db_user}} 192.168.0.0/24 md5"
+#  notify: restart postgres
+#  become: yes
+#
+#- name: get ip of ansible's master
+#  local_action: shell ifconfig eth1 | awk '/inet addr/{print substr($2,6)}'
+#  register: ansible_master_ip
+#
+#- name: allow trusted connection from vagrant
+#  lineinfile: >
+#    dest=/etc/postgresql/{{postgresql_version}}/main/pg_hba.conf
+#    line="host {{db_name}} {{db_user}} {{ansible_master_ip.stdout}} 255.255.255.255 trust"
+#  notify: restart postgres
+#  become: yes
+#
+#- name: allow trust local connection for user 'postgres'
+#  replace: dest=/etc/postgresql/{{postgresql_version}}/main/pg_hba.conf
+#           regexp='(local\s*all\s*postgres\s*)\w+(\n)'
+#           replace='\1trust\2'
+#  notify: restart postgres
+#  become: yes
+#
+## если в дальнейшем потребуются соеденения с других хостов, то код такой:
+##- name: allow trusted connection from staging
+##  lineinfile: >
+##    dest=/etc/postgresql/{{postgresql_version}}/main/pg_hba.conf
+##    line="host {{db_name}} {{db_user}} {{staging_ip}} 255.255.255.255 trust"
+##  become: yes
+#
+
+
+
