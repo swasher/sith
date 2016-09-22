@@ -1,0 +1,13 @@
+---
+- hosts: all
+  vars_files:
+    - group_vars/vault.yml
+
+  roles:
+    - python3
+    - git
+    - postgres
+    - bower
+    # - pip
+    - virtualenvironment
+    - dotfiles

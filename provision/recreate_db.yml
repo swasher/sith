@@ -1,0 +1,95 @@
+---
+- hosts: all
+  gather_facts: yes
+  vars_files:
+    - group_vars/all.yml
+    - group_vars/vault.yml
+
+  tasks:
+
+    - name: restart postgres for drop live connections
+      service:
+        name=postgresql
+        state=restarted
+      become: yes
+
+    - name: drop db
+      postgresql_db: >
+        name={{db_name}}
+        state=absent
+      become: yes
+      become_user: postgres
+
+    - name: create db
+      postgresql_db: >
+        name={{ db_name }}
+        encoding='UTF-8'
+        lc_collate='en_US.UTF-8'
+        lc_ctype='en_US.UTF-8'
+        template='template0'
+        state=present
+      become: yes
+      become_user: postgres
+
+    - name: Ensure user has access to the database
+      postgresql_user: >
+        db={{ db_name }}
+        name={{ db_user }}
+        password={{ db_password }}
+        priv=ALL
+        state=present
+      become: yes
+      become_user: postgres
+
+#    - name: Ensure user does not have unnecessary privileges
+#      postgresql_user: >
+#        name={{ db_user }}
+#        role_attr_flags=NOSUPERUSER,NOCREATEDB
+#        state=present
+#      become: yes
+#      become_user: postgres
+
+    - name: add extensions
+      postgresql_ext:
+        name=hstore
+        db={{db_name}}
+        login_user=postgres
+      become: yes
+      become_user: postgres
+
+    - name: remove migrations
+      file: path=/home/vagrant/sith/inventory/migrations
+            state=absent
+
+    - name: mkdir migrations
+      file: path=/home/vagrant/sith/inventory/migrations
+            state=directory
+
+    - name: touch migrations init
+      file: path=/home/vagrant/sith/inventory/migrations/__init__.py
+            state=touch
+
+    - name: makemigrations
+      shell: source {{virtualenv}}/bin/activate && python manage.py makemigrations
+      args:
+        chdir:  "{{project_root}}"
+        executable: /bin/bash
+
+
+    - name: migrate
+      shell: source {{virtualenv}}/bin/activate && python manage.py migrate
+      args:
+        chdir:  "{{project_root}}"
+        executable: /bin/bash
+
+    - name: create superuser
+      shell: source {{virtualenv}}/bin/activate && echo "from django.contrib.auth.models import User; User.objects.create_superuser('{{superusername}}', '{{superuseremail}}', '{{superuserpassword}}')" | python manage.py shell
+      args:
+        chdir: "{{project_root}}"
+        executable: /bin/bash
+
+    - name: load fixtures
+      shell: source {{virtualenv}}/bin/activate &&  python manage.py loaddata inventory/fixtures/SpareType.yaml inventory/fixtures/Container.yaml
+      args:
+        chdir: "{{project_root}}"
+        executable: /bin/bash

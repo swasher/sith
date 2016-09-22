@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+
+
+{% block body %}
+
+  {% load admin_urls %}
+  {% load staticfiles %}
+  {% load mptt_tags %}
+
+
+<div class="container-fluid">
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">  <a href="#computer" aria-controls="computer" role="tab" data-toggle="tab">Computer</a></li>
+    <li role="presentation">                 <a href="#cpu"      aria-controls="cpu" role="tab" data-toggle="tab">Cpu</a></li>
+    <li role="presentation">                 <a href="#memory"   aria-controls="memory" role="tab" data-toggle="tab">Memory</a></li>
+    <li role="presentation">                 <a href="#storage"  aria-controls="storage" role="tab" data-toggle="tab">Storage</a></li>
+    <li role="presentation">                 <a href="#devices"  aria-controls="devices" role="tab" data-toggle="tab">Devices</a></li>
+  </ul>
+
+
+  <div class="tab-content">
+
+      <div role="tabpanel" class="tab-pane fade in active" id="computer">
+          <table class="table table-striped table-hover table-bordered" id="table-computer">
+
+            <thead>
+            <tr>
+              <th>Name</th>
+              <th>Os</th>
+              <th>Ram</th>
+              <th>Parent</th>
+            </tr>
+            <thead>
+
+            <tfoot>
+            <tr>
+              <th>Name</th>
+              <th>Os</th>
+              <th>Ram</th>
+              <th>Parent</th>
+            </tr>
+            </tfoot>
+
+            <tbody>
+            {% for computer in computers %}
+              <tr>
+                <td><a href="{% url 'admin:inventory_computer_change' computer.pk %}">{{ computer.name }}</a></td>
+                <td>{{ computer.os }}</td>
+                <td>{{ computer.ram }}</td>
+                <td>{{ computer.get_ancestors_list }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+
+          </table>
+      </div>
+
+      <div role="tabpanel" class="tab-pane fade" id="cpu">
+          <table class="table table-striped table-hover table-bordered" id="table-cpu">
+            <thead>
+            <tr>
+              <th>CPU</th>
+              <th>Container</th>
+            </tr>
+            <thead>
+
+            <tfoot>
+            <tr>
+              <th>CPU</th>
+              <th>Container</th>
+            </tr>
+            </tfoot>
+
+            <tbody>
+            {% for cpu in processors %}
+              <tr>
+                <td>{{ cpu.name }}</td>
+                <td>{{ cpu.container.name }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+      </div>
+
+      <div role="tabpanel" class="tab-pane fade" id="memory">
+          <table class="table table-striped table-hover table-bordered" id="table-memory">
+            <thead>
+              <tr>
+                <th>Memory</th>
+                <th>Type</th>
+                <th>Container</th>
+              </tr>
+            <thead>
+            <tfoot>
+              <tr>
+                <th>Memory</th>
+                <th>Type</th>
+                <th>Container</th>
+              </tr>
+            </tfoot>
+            <tbody>
+            {% for mem in memory %}
+              <tr>
+                <td>{{ mem.name }}</td>
+                <td>{{ mem.data.type }}</td>
+                <td>{{ mem.container.name }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+      </div>
+
+
+      <div role="tabpanel" class="tab-pane fade" id="storage">
+          <table class="table table-striped table-hover table-bordered" id="table-storage">
+            <thead>
+              <tr>
+                <th>Memory</th>
+                <th>Type</th>
+                <th>Container</th>
+              </tr>
+            <thead>
+            <tfoot>
+              <tr>
+                <th>Memory</th>
+                <th>Type</th>
+                <th>Container</th>
+              </tr>
+            </tfoot>
+            <tbody>
+            {% for storage in storages %}
+              <tr>
+                <td>{{ storage.name }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+      </div>
+
+      <div role="tabpanel" class="tab-pane fade" id="devices">
+          <table class="table table-striped table-hover table-bordered" id="table-devices">
+            <thead>
+              <tr>
+                <th>Memory</th>
+                <th>Type</th>
+                <th>Container</th>
+              </tr>
+            <thead>
+            <tfoot>
+              <tr>
+                <th>Memory</th>
+                <th>Type</th>
+                <th>Container</th>
+              </tr>
+            </tfoot>
+            <tbody>
+            {% for device in devices %}
+              <tr>
+                <td>{{ devices.name }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+      </div>
+
+  </div>
+</div>
+
+
+{% endblock %}

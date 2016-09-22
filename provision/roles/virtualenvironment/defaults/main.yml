@@ -1,0 +1,4 @@
+---
+# for python 3.4 and newer
+virtualenv_command: pyvenv
+apt_cache_valid_time: 86400

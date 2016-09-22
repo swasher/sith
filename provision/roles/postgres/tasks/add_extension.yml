@@ -1,0 +1,9 @@
+---
+- name: add extensions
+  postgresql_ext:
+    name=hstore
+    db={{db_name}}
+    login_user=postgres
+  notify: restart postgres
+  become: yes
+  become_user: postgres
