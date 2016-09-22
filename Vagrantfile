@@ -36,6 +36,11 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
     mkdir --parents /home/vagrant/log
     touch /home/vagrant/log/ansible.log
+    wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+    heroku plugins:install git://github.com/stefansundin/heroku-bash-completion.git
+    echo "source '$HOME/.heroku/plugins/heroku-bash-completion/heroku-completion.bash'" >> .bashrc
+    git config --global user.email "mr.swasher@gmail.com"
+    git config --global user.name "swasher"
     cd sith/provision && fab development provision
   SHELL
 
