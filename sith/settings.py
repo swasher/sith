@@ -23,10 +23,7 @@ PRODUCTION = True if SERVER == 'heroku' else False
 # /home/user/sith
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# /home/user
-HOME_DIR = os.path.dirname(BASE_DIR)
-
-STATIC_ROOT = os.path.join(HOME_DIR, 'static_root')
+STATIC_ROOT = os.path.join(BASE_DIR, 'collect_static')
 
 STATIC_URL = '/static/'
 
@@ -38,7 +35,7 @@ STATICFILES_DIRS =[
 # for heroku
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
-MEDIA_ROOT = os.path.join(HOME_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #
 # ENVIRONMENT SETUP
@@ -97,9 +94,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sith.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
+#
+# DATABASE
+#
 
 DATABASES = {
     'default': {
@@ -155,55 +152,6 @@ USE_TZ = False
 
 
 #
-# LOGGING SETUP
-#
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-            'datefmt' : "%d/%b/%Y %H:%M:%S"
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
-    },
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(HOME_DIR, 'log', 'django.log'),
-            'maxBytes': 1024 * 1024 * 15,  # 15MB
-            'backupCount': 10,
-            'formatter': 'verbose'
-        },
-        'userfile': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(HOME_DIR, 'log', 'user.log'),
-            'maxBytes': 1024 * 1024 * 15,  # 15MB
-            'backupCount': 10,
-            'formatter': 'simple'
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers':['file'],
-            'propagate': True,
-            'level':'DEBUG',
-        },
-        'workflow': {
-            'handlers': ['userfile'],
-            'level': 'DEBUG',
-        },
-    }
-}
-
-SERIALIZATION_MODULES = {'yaml': 'serializers.yaml'}
-
-#
 # Make django message type accordance to bootstrap alerts colors
 #
 
@@ -214,11 +162,8 @@ MESSAGE_TAGS = {message_constants.DEBUG: 'debug',
                 message_constants.WARNING: 'warning',
                 message_constants.ERROR: 'danger',}
 
+#
+# Other settings
+#
 
-SERVER = os.getenv('SERVER')
-if SERVER == 'production':
-    # heroku specific settings
-    pass
-if SERVER == 'develoment':
-    # develoment specific settings
-    pass
+SERIALIZATION_MODULES = {'yaml': 'serializers.yaml'}
