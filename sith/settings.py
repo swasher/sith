@@ -27,6 +27,9 @@ STATICFILES_DIRS =[
     'bower_components'
 ]
 
+# for heroku
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
 MEDIA_ROOT = os.path.join(HOME_DIR, 'media')
 
 #
@@ -100,6 +103,12 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+# configure database for heroku
+import dj_database_url
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
+
 
 
 # Password validation
@@ -194,3 +203,12 @@ MESSAGE_TAGS = {message_constants.DEBUG: 'debug',
                 message_constants.SUCCESS: 'success',
                 message_constants.WARNING: 'warning',
                 message_constants.ERROR: 'danger',}
+
+
+SERVER = os.getenv('SERVER')
+if SERVER == 'production':
+    # heroku specific settings
+    pass
+if SERVER == 'develoment':
+    # develoment specific settings
+    pass

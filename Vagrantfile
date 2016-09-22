@@ -25,9 +25,11 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
     export DEBIAN_FRONTEND=noninteractive
+    echo 'SERVER=development' >> /etc/environment
     apt-get update -q
     apt-get autoremove -y
     apt-get install python-dev libyaml-dev -y -q
+    apt-get install libpq-dev # for psycopg2
     curl -s https://bootstrap.pypa.io/get-pip.py | sudo python -
     pip install fabric
     pip install ansible
