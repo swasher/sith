@@ -29,7 +29,6 @@ Vagrant.configure(2) do |config|
     apt-get update -q
     apt-get autoremove -y
     apt-get install python-dev libyaml-dev -y -q
-    apt-get install libpq-dev # for psycopg2
     curl -s https://bootstrap.pypa.io/get-pip.py | sudo python -
     pip install fabric
     pip install ansible
@@ -41,9 +40,11 @@ Vagrant.configure(2) do |config|
     wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh
     heroku plugins:install git://github.com/stefansundin/heroku-bash-completion.git
     echo "source '$HOME/.heroku/plugins/heroku-bash-completion/heroku-completion.bash'" >> .bashrc
-    git config --global user.email "mr.swasher@gmail.com"
-    git config --global user.name "swasher"
-    cd sith/provision && fab development provision
   SHELL
+
+  # Run Ansible from the Vagrant VM
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.playbook = "playbook.yml"
+  end
 
 end

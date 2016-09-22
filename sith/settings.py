@@ -11,11 +11,19 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
-import sith.secrets
+import dj_database_url
 
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+SERVER = os.getenv('SERVER')
+PRODUCTION = True if SERVER == 'heroku' else False
+
+# if not PRODUCTION:
+#     import sith.secrets
+
+# /home/user/sith
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# /home/user
 HOME_DIR = os.path.dirname(BASE_DIR)
 
 STATIC_ROOT = os.path.join(HOME_DIR, 'static_root')
@@ -35,10 +43,10 @@ MEDIA_ROOT = os.path.join(HOME_DIR, 'media')
 #
 # ENVIRONMENT SETUP
 #
-
-SECRET_KEY = sith.secrets.SECRET_KEY
-ALLOWED_HOSTS = []
-DEBUG = True
+SECRET_KEY = os.getenv('SECRET_KEY')
+#ALLOWED_HOSTS = ['myip']
+ALLOWED_HOSTS = ['*']
+DEBUG = False if PRODUCTION else True
 
 
 # Application definition
@@ -96,16 +104,18 @@ WSGI_APPLICATION = 'sith.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': sith.secrets.DATABASE_NAME,
-        'USER': sith.secrets.DATABASE_USER,
-        'PASSWORD': sith.secrets.DATABASE_PASSWORD,
+        #'NAME': sith.secrets.DATABASE_NAME,
+        #'USER': sith.secrets.DATABASE_USER,
+        #'PASSWORD': sith.secrets.DATABASE_PASSWORD,
+        'NAME': os.environ.get('DATABASE_NAME', ''),
+        'USER': os.environ.get('DATABASE_USER', ''),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
         'HOST': 'localhost',
         'PORT': '',
     }
 }
 
 # configure database for heroku
-import dj_database_url
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
 
