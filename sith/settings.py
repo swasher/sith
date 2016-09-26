@@ -42,7 +42,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-ALLOWED_HOSTS = ['195.138.191.47','85.238.98.187']
+ALLOWED_HOSTS = ['195.138.191.47','85.238.98.187','.inventory.pp.ua']
 
 
 # Application definition
