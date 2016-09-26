@@ -17,13 +17,14 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.contrib import auth
 
 admin.autodiscover()
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('django.contrib.auth.urls')),
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'admin/login.html'}),
-    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout'),
+    url(r'^accounts/login/$', auth.views.login, {'template_name': 'admin/login.html'}),
+    url(r'^accounts/logout/$', auth.views.logout),
     url(r'^', include('inventory.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

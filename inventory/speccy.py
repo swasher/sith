@@ -55,8 +55,8 @@ def parse_speccy(speccy_xml):
     devices.append(device)
 
 
-    slots_branch = tree.iterfind('.//section[@title="SPD"]/section')
-    for leaf in slots_branch:  # поиск элементов
+    memory_slots_branch = tree.iterfind('.//section[@title="SPD"]/section')
+    for leaf in memory_slots_branch:  # поиск элементов
         feature = dict()
         feature['slot'] = leaf.get('title')
         feature['type'] = leaf.xpath('entry[@title="Type"]')[0].get('value')
@@ -74,16 +74,24 @@ def parse_speccy(speccy_xml):
         devices.append(device)
 
 
-    feature = dict()
-    model_on_videocard = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section[@title="Monitor"]/entry[@title="Name"]')[0].get('value')
-    model_match = re.match(r'(.*)\son\s', model_on_videocard)
-    feature['model'] = model_match.group(1)
-    feature['native_resolution'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section[@title="Monitor"]/entry[@title="Work Resolution"]')[0].get('value')
-    device = dict()
-    device['type'] = 'monitor'
-    device['verbose'] = feature['model']
-    device['feature'] = feature
-    devices.append(device)
+
+    monitor_branch = tree.iterfind('.//mainsection[@title="Graphics"]/section')
+    for leaf in monitor_branch:  # поиск элементов
+
+        monitor = leaf.get('title')
+
+        if 'Monitor' in monitor:
+
+            feature = dict()
+            model_on_videocard = leaf.xpath('entry[@title="Name"]')[0].get('value')
+            model_match = re.match(r'(.*)\son\s', model_on_videocard)
+            feature['model'] = model_match.group(1)
+            feature['native_resolution'] = leaf.xpath('entry[@title="Work Resolution"]')[0].get('value')
+            device = dict()
+            device['type'] = 'monitor'
+            device['verbose'] = feature['model']
+            device['feature'] = feature
+            devices.append(device)
 
 
 
