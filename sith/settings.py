@@ -38,11 +38,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #
 DEBUG = False if PRODUCTION else True
 SECRET_KEY = os.getenv('SECRET_KEY')
-#ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
-# Honor the 'X-Forwarded-Proto' header for request.is_secure()
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-ALLOWED_HOSTS = ['195.138.191.47','85.238.98.187','.inventory.pp.ua']
 
 
 # Application definition
