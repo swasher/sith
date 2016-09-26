@@ -3,6 +3,10 @@ from django.contrib import admin
 from django.contrib.admin import widgets
 from time import gmtime, strftime
 from django.contrib import messages
+from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.utils.safestring import mark_safe
 from mptt.admin import MPTTModelAdmin
 from mptt.admin import DraggableMPTTAdmin
 from inventory.models import Store, Container, Computer
@@ -80,11 +84,45 @@ class SpareTypeAdmin(admin.ModelAdmin):
     inlines = (PropertyAdminInline, )
     #fields = ['name']
 
+
+
+
 class ComponentAdmin(admin.ModelAdmin):
+
+    def response_change(self, request, obj):
+        """
+        Эта функция выполняется при нажатии на  кнопку LOAD PROPERTIES в форме редактирования комплектующего.
+        Заполняет поле hstore согласно типу комплектующего.
+        Если поле hstore что-то содержало, то содержимое удаляется.
+        """
+
+        opts = self.model._meta
+        pk_value = obj._get_pk_val()
+        preserved_filters = self.get_preserved_filters(request)
+
+        if "_load_properties" in request.POST:
+            properties  = Property.objects.filter(sparetype__pk=obj.sparetype_id)
+
+            data = dict()
+            for prop in properties:
+                data[prop.name] = ''
+            obj.data=data
+            obj.save()
+            redirect_url = reverse('admin:%s_%s_change' %
+                               (opts.app_label, opts.model_name),
+                               args=(pk_value,),
+                               current_app=self.admin_site.name)
+            redirect_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, redirect_url)
+            return HttpResponseRedirect(redirect_url)
+        else:
+            return super(ComponentAdmin, self).response_change(request, obj)
+
+
     #fields = ['name', 'warranty']
     #list_display_fields = ['name', 'warranty', 'description',]
     #list_editable
-    pass
+    ordering = ['sparetype']
+    list_display=['sparetype', 'name', 'container']
 
 admin.site.site_header = 'SITH'
 

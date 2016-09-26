@@ -14,13 +14,9 @@ import os
 import dj_database_url
 
 
-SERVER = os.getenv('SERVER')
-PRODUCTION = True if SERVER == 'heroku' else False
+SERVER_TYPE = os.getenv('SERVER_TYPE')
+PRODUCTION = True if SERVER_TYPE == 'heroku' else False
 
-# if not PRODUCTION:
-#     import sith.secrets
-
-# /home/user/sith
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'collect_static')
@@ -40,10 +36,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #
 # ENVIRONMENT SETUP
 #
-SECRET_KEY = os.getenv('SECRET_KEY')
-#ALLOWED_HOSTS = ['myip']
-ALLOWED_HOSTS = ['*']
 DEBUG = False if PRODUCTION else True
+SECRET_KEY = os.getenv('SECRET_KEY')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS')
 
 
 # Application definition
@@ -60,6 +55,10 @@ INSTALLED_APPS = [
     'mptt',
     'inventory',
 ]
+
+if not PRODUCTION:
+    INSTALLED_APPS.append('debug_toolbar')
+    INTERNAL_IPS = '172.28.128.3'
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',

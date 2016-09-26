@@ -31,53 +31,6 @@ KIND_CHOICES = (
 )
 
 
-# class TreeItem(MPTTModel):
-#     """
-#     Эта модель содержит древовидную структуру, в которой узлами являются [помещения или компьютеры],
-#     компьютеры, в свою очередь, являются контейнерами для комплетующих.
-#     """
-#     # content_type = models.ForeignKey(ContentType)
-#     # object_id = models.PositiveIntegerField()
-#     # content_object = GenericForeignKey('content_type', 'object_id')
-#     # parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
-#
-#     #limit = models.Q(model='Room') | models.Q(model='Computer')
-#     content_type = models.ForeignKey(ContentType)#, limit_choices_to=limit)
-#     object_id = models.PositiveIntegerField()
-#     content_object = GenericForeignKey('content_type', 'object_id')
-#     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
-#
-#     def __str__(self):
-#         return self.content_object.__str__()
-#
-# class Room(models.Model):
-#     #type = models.CharField(max_length=50)
-#     name = models.CharField(max_length=50, unique=True)
-#     kind = models.CharField(max_length=4, choices=KIND_CHOICES, null=True)
-#     notice = models.TextField(max_length=300, default='', blank=True)
-#     #parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
-#
-#     class Meta:
-#         verbose_name = 'Помещение'
-#         verbose_name_plural = 'Помещения'
-#
-#     def __str__(self):
-#         return self.name
-#
-#
-# class Computer(models.Model):
-#     name = models.CharField(max_length=100)
-#     os = models.CharField(max_length=100, blank=True)
-#     ram = models.CharField(max_length=20, blank=True)  # TODO может это надо сделать integer для поиска
-#     installation_date = models.CharField(max_length=20, blank=True, null=True)  # TODO это надо сделать датой
-#
-#     class Meta:
-#         verbose_name = 'Компьютер'
-#         verbose_name_plural = 'Компьютеры'
-#
-#     def __str__(self):
-#         return self.name
-
 class Container(MPTTModel):
     """
     Эта модель содержит древовидную структуру, в которой узлами являются помещения (или контейнеры типа шкафа) или
@@ -210,7 +163,7 @@ class Component(models.Model):
     # для чего это было в примере в офф мануале?
     # objects = hstore.HStoreManager()
 
-
+    # DEPRECATED
     # TODO Может сделать отдельную кнопку, типа сгенерить нужные поля?
     # Функция рабочая, но мешает загрузку данных из speccy, так как оверрайдит save
     # def save(self, *args, **kwargs):
@@ -240,6 +193,26 @@ class Component(models.Model):
     #         # либо стереть старые поля вместе с данными и добавить новые поля
     #         pass
     #     super(Component, self).save(*args, **kwargs)
+
+    # DEPRECATED
+    # def load_properties(self, *args, **kwargs):
+    #     """
+    #       Эта функция заменяет метод save модели, сохраняя поля Комплектующего, которые заполнил пользователь,
+    #       затем стирет все текущие поля и их значения hstore и создает новые, согласно Типу Комплектующего
+    #       из таблицы SpareType
+    #     """
+    #     if getattr(self, 'unit_type', True):
+    #         # получаем тип юнита self.description = self.unit_type.name
+    #         # получаем объект kind = Kind.objects.get(id=self.id)
+    #         # получаем объект property  = Property.objects.get(kind=self.id)
+    #         properties  = Property.objects.filter(sparetype__pk=self.unit_type_id)
+    #
+    #         data = dict()
+    #         for prop in properties:
+    #             data[prop.name] = ''
+    #         self.data = data
+    #     super(Component, self).save(*args, **kwargs)
+
 
     class Meta:
         verbose_name = 'Комплектующие и устройства'

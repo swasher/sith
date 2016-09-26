@@ -1,0 +1,17 @@
+---
+- name: download heroku toolbelt
+  get_url:
+    url: "https://toolbelt.heroku.com/install-ubuntu.sh"
+    dest: "."
+
+- script: install-ubuntu.sh
+#  args:
+#    chdir: "{{ user_home }}"
+
+- file: >
+    path=install-ubuntu.sh
+    state=absent
+
+- shell: heroku plugins:install git://github.com/stefansundin/heroku-bash-completion.git
+
+- shell: echo "source '$HOME/.heroku/plugins/heroku-bash-completion/heroku-completion.bash'" >> .bashrc

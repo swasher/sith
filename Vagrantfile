@@ -25,26 +25,29 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
     export DEBIAN_FRONTEND=noninteractive
-    echo 'SERVER=development' >> /etc/environment
     apt-get update -q
     apt-get autoremove -y
     apt-get install python-dev libyaml-dev -y -q
     curl -s https://bootstrap.pypa.io/get-pip.py | sudo python -
-    pip install fabric
-    pip install ansible
   SHELL
+    #pip install fabric
+    #pip install ansible
+
 
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
     mkdir --parents /home/vagrant/log
     touch /home/vagrant/log/ansible.log
-    wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh
-    heroku plugins:install git://github.com/stefansundin/heroku-bash-completion.git
-    echo "source '$HOME/.heroku/plugins/heroku-bash-completion/heroku-completion.bash'" >> .bashrc
   SHELL
 
   # Run Ansible from the Vagrant VM
-  config.vm.provision "ansible_local" do |ansible|
-    ansible.playbook = "playbook.yml"
+  config.vm.provision :ansible_local do |ansible|
+    ansible.playbook       = "provision.yml"
+    ansible.verbose        = true
+    ansible.install        = true
+    ansible.install_mode   = 'pip'
+    ansible.limit          = 'development'
+    ansible.provisioning_path = "/home/vagrant/sith/provision"
+    ansible.inventory_path = "/home/vagrant/sith/provision/inventories"
   end
 
 end

@@ -11,3 +11,5 @@
     # - pip
     - virtualenvironment
     - dotfiles
+    - server
+    - heroku

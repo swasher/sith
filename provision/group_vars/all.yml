@@ -1,15 +1,15 @@
 ---
 project_repo:       http://github.com/swasher/sith.git
 project_name:       sith
-user_home:         "/home/{{remote_user}}"
-virtualenv:        "{{user_home}}/virtualenvironment"
-project_root:      "{{user_home}}/{{project_name}}"
+user_home:         "/home/{{ remote_user }}"
+virtualenv:        "{{ user_home }}/virtualenvironment"
+project_root:      "{{ user_home }}/{{ project_name }}"
 ansible_user:      "{{ remote_user }}"
 log_dir:           "{{ user_home }}/log"
 input_dir:         "{{ user_home }}/input"
 
 ram_dir:           "/run/uwsgi"
-socket:            "{{ram_dir}}/{{project_name}}.socket"
+socket:            "{{ ram_dir }}/{{project_name}}.socket"
 
 # credentials for http://smsc.ua/
 smsc_login:        "{{ vault_smsc_login }}"
