@@ -1,5 +1,6 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.contrib.auth.decorators import login_required
 from xml.dom.minidom import parse, parseString
 from .speccy import parse_speccy
 from .models import Component
@@ -26,7 +27,7 @@ from .models import Computer
 #
 #     return render_to_response('speccy.html', {'result': computer}, context)
 
-
+@login_required()
 def grid(request):
     context = RequestContext(request)
 

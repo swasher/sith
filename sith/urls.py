@@ -23,5 +23,7 @@ admin.autodiscover()
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('django.contrib.auth.urls')),
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'admin/login.html'}),
+    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout'),
     url(r'^', include('inventory.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
