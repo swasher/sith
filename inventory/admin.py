@@ -16,27 +16,6 @@ from inventory.models import Property
 from inventory.models import Manufacture
 
 
-class ContainerMPTTAdmin(MPTTModelAdmin):
-    # specify pixel amount for this ModelAdmin only:
-    mptt_level_indent = 20
-    #list_display = ['name', 'kind']
-
-    def get_queryset(self, request):
-        qs = super(ContainerMPTTAdmin, self).get_queryset(request)
-        return qs.exclude(kind='PC')
-    #inlines = [ComputerInline]
-
-
-# class AllContainerTree(Container):
-#     class Meta:
-#         proxy = True
-#
-# class AllContainerTreeMPTTAdmin(MPTTModelAdmin):
-#     list_display_links = ()
-#     def has_add_permission(self, request):
-#         return False
-
-
 class ComponentAdminInline(admin.StackedInline):
     model = Component
     fields = ['name']
@@ -53,6 +32,34 @@ class ComponentAdminInline(admin.StackedInline):
 
     # def has_delete_permission(self, request, obj=None):
     #     return False
+
+"""
+class ComputerProxyAdminInline(admin.StackedInline):
+    model = ComputerProxy
+    #fields = ['name']
+    #fk_name = ['parent']
+    extra = 0
+"""
+class ContainerMPTTAdmin(MPTTModelAdmin):
+    # specify pixel amount for this ModelAdmin only:
+    mptt_level_indent = 20
+    #list_display = ['name', 'kind']
+
+    def get_queryset(self, request):
+        qs = super(ContainerMPTTAdmin, self).get_queryset(request)
+        return qs.exclude(kind='PC')
+
+    inlines = [ComponentAdminInline] #,ComputerProxyAdminInline]
+
+# class AllContainerTree(Container):
+#     class Meta:
+#         proxy = True
+#
+# class AllContainerTreeMPTTAdmin(MPTTModelAdmin):
+#     list_display_links = ()
+#     def has_add_permission(self, request):
+#         return False
+
 
 class ComputerMPTTAdmin(admin.ModelAdmin):
     inlines = (ComponentAdminInline, )
@@ -77,14 +84,14 @@ class ComputerMPTTAdmin(admin.ModelAdmin):
             obj.speccy = None
         super(ComputerMPTTAdmin, self).save_model(request, obj, form, change)
 
+
 class PropertyAdminInline(admin.TabularInline):
     model = Property
+
 
 class SpareTypeAdmin(admin.ModelAdmin):
     inlines = (PropertyAdminInline, )
     #fields = ['name']
-
-
 
 
 class ComponentAdmin(admin.ModelAdmin):

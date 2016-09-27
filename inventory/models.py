@@ -53,16 +53,17 @@ class Container(MPTTModel):
 
 
 class Computer(Container):
-    #container = TreeOneToOneField(Container, on_delete=models.CASCADE)
-    #name = models.CharField(max_length=100)
     os = models.CharField(max_length=100, blank=True)
     ram = models.CharField(max_length=20, blank=True) # TODO может это надо сделать integer для поиска
     installation_date = models.CharField(max_length=40, blank=True, null=True) # TODO это надо сделать датой
     speccy = models.FileField(upload_to='', blank=True, )
+    #parent_link = models.OneToOneField(Container, primary_key=True, db_column="id", parent_link=True)
 
     class Meta:
         verbose_name = 'Компьютер'
         verbose_name_plural = 'Компьютеры'
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 
@@ -129,6 +130,10 @@ class Store(models.Model):
     address = models.CharField(max_length=128, blank=True)
     phone = models.CharField(max_length=10, blank=True)
 
+    class Meta:
+        verbose_name = 'Поставщик'
+        verbose_name_plural = 'Поставщики'
+
     def __str__(self):
         return self.name
 
@@ -138,6 +143,8 @@ class Manufacture(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name = 'Вендор'
+        verbose_name_plural = 'Вендоры'
 
     def __str__(self):
         return self.name
