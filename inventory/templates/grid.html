@@ -136,6 +136,7 @@
             <thead>
               <tr>
                 <th>Device</th>
+                <th>Type</th>
                 <th>Container</th>
               </tr>
             <thead>
@@ -144,6 +145,7 @@
             {% for device in devices %}
               <tr>
                 <td><a href="{% url 'admin:inventory_component_change' device.pk %}">{{ device.name }}</a></td>
+                <td>{{ device.sparetype }}</td>
                 <td>{{ device.container.name }}</td>
               </tr>
             {% endfor %}

@@ -122,7 +122,7 @@ class ComponentAdmin(admin.ModelAdmin):
     #list_display_fields = ['name', 'warranty', 'description',]
     #list_editable
     ordering = ['sparetype']
-    list_display=['sparetype', 'name', 'container']
+    list_display=['name', 'sparetype', 'container']
 
 admin.site.site_header = 'SITH'
 

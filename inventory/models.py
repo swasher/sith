@@ -106,6 +106,7 @@ class SpareType(models.Model):
     class Meta:
         verbose_name = 'Тип железа'
         verbose_name_plural = 'Тип железа'
+        ordering = ['name_verbose']
 
     def __str__(self):
         return self.name_verbose
@@ -134,6 +135,9 @@ class Store(models.Model):
 
 class Manufacture(models.Model):
     name = models.CharField(max_length=64)
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         return self.name
