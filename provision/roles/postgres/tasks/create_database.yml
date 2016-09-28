@@ -23,12 +23,12 @@
   become_user: postgres
 
 
-- name: Ensure user does not have unnecessary privileges
-  postgresql_user: name={{ db_user }}
-                   role_attr_flags=NOSUPERUSER,NOCREATEDB
-                   state=present
-  become: yes
-  become_user: postgres
+#- name: Ensure user does not have unnecessary privileges
+#  postgresql_user: name={{ db_user }}
+#                   role_attr_flags=NOSUPERUSER,NOCREATEDB
+#                   state=present
+#  become: yes
+#  become_user: postgres
 
 
 - name: for django test user django must have permission to create tables

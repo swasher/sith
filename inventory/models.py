@@ -56,8 +56,7 @@ class Computer(Container):
     os = models.CharField(max_length=100, blank=True)
     ram = models.CharField(max_length=20, blank=True) # TODO может это надо сделать integer для поиска
     installation_date = models.CharField(max_length=40, blank=True, null=True) # TODO это надо сделать датой
-    speccy = models.FileField(upload_to='', blank=True, )
-    #parent_link = models.OneToOneField(Container, primary_key=True, db_column="id", parent_link=True)
+    speccy = models.FileField(upload_to='', blank=True)
 
     class Meta:
         verbose_name = 'Компьютер'

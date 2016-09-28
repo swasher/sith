@@ -16,16 +16,36 @@ from inventory.models import Property
 from inventory.models import Manufacture
 
 
-class ComponentAdminInline(admin.StackedInline):
-    model = Component
+# class ComputerProxy(Container):
+#     class Meta:
+#         proxy = True
+#         verbose_name = "Компьютер"
+#         verbose_name_plural = "Компьютеры"
+
+class ComputerAdminInline(admin.StackedInline):
+    model = Container
     fields = ['name']
-    readonly_fields = ['name']
+    template = "admin/inventory/component/edit_inline/stacked.html"
     max_num = 1
     extra = 0
     show_change_link = True
-    verbose_name = ''
+    verbose_name = "Компьютер"
+    verbose_name_plural = "Компьютеры"
+
+    def get_queryset(self, request):
+        qs = super(ComputerAdminInline, self).get_queryset(request)
+        return qs.filter(kind='PC')
+
+class ComponentAdminInline(admin.StackedInline):
+    model = Component
+    fields = ['name']
     template = "admin/inventory/component/edit_inline/stacked.html"
-    can_delete = True
+    max_num = 1
+    extra = 0
+    show_change_link = True
+    #can_delete = True
+    verbose_name = "Устройство"
+    verbose_name_plural = "Устройства"
 
     # def has_add_permission(self, request, obj=None):
     #     return False
@@ -33,23 +53,16 @@ class ComponentAdminInline(admin.StackedInline):
     # def has_delete_permission(self, request, obj=None):
     #     return False
 
-"""
-class ComputerProxyAdminInline(admin.StackedInline):
-    model = ComputerProxy
-    #fields = ['name']
-    #fk_name = ['parent']
-    extra = 0
-"""
 class ContainerMPTTAdmin(MPTTModelAdmin):
     # specify pixel amount for this ModelAdmin only:
     mptt_level_indent = 20
     #list_display = ['name', 'kind']
 
-    def get_queryset(self, request):
-        qs = super(ContainerMPTTAdmin, self).get_queryset(request)
-        return qs.exclude(kind='PC')
+    # def get_queryset(self, request):
+    #     qs = super(ContainerMPTTAdmin, self).get_queryset(request)
+    #     return qs.exclude(kind='PC')
 
-    inlines = [ComponentAdminInline] #,ComputerProxyAdminInline]
+    inlines = [ComputerAdminInline, ComponentAdminInline]
 
 # class AllContainerTree(Container):
 #     class Meta:

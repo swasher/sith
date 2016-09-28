@@ -37,16 +37,33 @@
         <h3>&nbsp;<span class="inline_label">
             {% if inline_admin_form.original %}
                 {% if inline_admin_form.model_admin.show_change_link and inline_admin_form.model_admin.has_registered_model %}
-                   <div class="type">{% spaceless %}{{ inline_admin_form.original.sparetype.name_verbose }}{% endspaceless %}:</div>
-                   <div class="title"><a href="{% url inline_admin_form.model_admin.opts|admin_urlname:'change' inline_admin_form.original.pk|admin_urlquote %}" > {{ inline_admin_form.original }} </a></div>
+
+                    {% if inline_admin_form.model_admin.opts.model_name == 'container' %}
+                      <div class="type">{% spaceless %}{{ inline_admin_form.original.get_kind_display }}{% endspaceless %}:</div>
+                      <div class="title">
+{#                        <a href="{% url inline_admin_form.model_admin.opts|admin_urlname:'change' inline_admin_form.original.pk|admin_urlquote %}" >#}
+                        <a href="{% url 'admin:inventory_computer_change' inline_admin_form.original.pk|admin_urlquote %}" >
+                          {{ inline_admin_form.original }}
+                        </a></div>
+                    {% endif %}
+
+                    {% if inline_admin_form.model_admin.opts.model_name == 'component' %}
+                      <div class="type">{% spaceless %}{{ inline_admin_form.original.sparetype.name_verbose }}{% endspaceless %}:</div>
+                      <div class="title"><a href="{% url inline_admin_form.model_admin.opts|admin_urlname:'change' inline_admin_form.original.pk|admin_urlquote %}" > {{ inline_admin_form.original }} </a></div>
+                    {% endif %}
+
+
                 {% else %}
-                    {{ inline_admin_form.original }}
+                   {{ inline_admin_form.original }}
                 {% endif %}
 
                 {% comment %} Ссылка "Изменить" перенесена в правую часть
                     {% if inline_admin_form.model_admin.show_change_link and inline_admin_form.model_admin.has_registered_model %}
-                    <a href="{% url inline_admin_form.model_admin.opts|admin_urlname:'change' inline_admin_form.original.pk|admin_urlquote %}" class="inlinechangelink">{% trans "Change" %}</a>
-                {% endif %}{% endcomment %}
+                    <a href="{% url inline_admin_form.model_admin.opts|admin_urlname:'change' inline_admin_form.original.pk|admin_urlquote %}"
+                    class="inlinechangelink">{% trans "Change" %}</a>
+                    {% endif %}
+                {% endcomment %}
+
             {% else %}
               #{{ forloop.counter }}
             {% endif %}</span>
