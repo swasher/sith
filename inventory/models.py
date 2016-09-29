@@ -150,6 +150,7 @@ class Manufacture(models.Model):
 
 
 class Component(models.Model):
+
     name = models.CharField(max_length=64)
     container = TreeForeignKey(Container)
     sparetype = models.ForeignKey(SpareType)

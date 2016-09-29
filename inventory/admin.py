@@ -58,9 +58,9 @@ class ContainerMPTTAdmin(MPTTModelAdmin):
     mptt_level_indent = 20
     #list_display = ['name', 'kind']
 
-    # def get_queryset(self, request):
-    #     qs = super(ContainerMPTTAdmin, self).get_queryset(request)
-    #     return qs.exclude(kind='PC')
+    def get_queryset(self, request):
+        qs = super(ContainerMPTTAdmin, self).get_queryset(request)
+        return qs.exclude(kind='PC')
 
     inlines = [ComputerAdminInline, ComponentAdminInline]
 
@@ -137,12 +137,25 @@ class ComponentAdmin(admin.ModelAdmin):
         else:
             return super(ComponentAdmin, self).response_change(request, obj)
 
+    readonly_fields  = ('link_to_parent_computer',)
 
-    #fields = ['name', 'warranty']
-    #list_display_fields = ['name', 'warranty', 'description',]
+    def link_to_parent_computer(self, instance):
+        from django.utils.html import format_html
+        ancestor = instance.container.id
+        url = reverse("admin:inventory_computer_change", args=[ancestor])
+        computer = instance.container.name
+        return format_html("<a href='{}'>{}</a>", url, computer)
+
+    #link_to_parent_computer.short_description = "Link to parent computer"
+
+    list_display=['name', 'sparetype', 'container']  # это поля в виде списка
+    #fields = ['link_to_parent_computer', 'name', 'warranty', 'description']    # это поля для формы редактирования
+    fields = ['link_to_parent_computer', 'name', 'container', 'sparetype', 'manufacture', 'model', 'purchase_date',
+              'store', 'warranty', 'serialnumber', 'description', 'price_uah', 'price_usd', 'iscash', 'invoice',
+              'product_page', 'data']
+
     #list_editable
     ordering = ['sparetype']
-    list_display=['name', 'sparetype', 'container']
 
 admin.site.site_header = 'SITH'
 
