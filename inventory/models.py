@@ -3,10 +3,12 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.contrib.postgres.fields import HStoreField
+from django.utils.safestring import mark_safe
 from mptt.models import MPTTModel, TreeForeignKey, TreeOneToOneField
 from django_hstore import hstore
 from django.core.exceptions import ObjectDoesNotExist
 from .speccy import parse_speccy
+from cloudinary.models import CloudinaryField
 
 DATATYPE_CHOICES = (
 ('IntegerField', 'IntegerField'),
@@ -224,6 +226,17 @@ class Component(models.Model):
     #         self.data = data
     #     super(Component, self).save(*args, **kwargs)
 
+    def load_properties(self):
+        properties  = Property.objects.filter(sparetype__pk=self.sparetype_id)
+
+        data = dict()
+        for prop in properties:
+            data[prop.name] = ''
+        self.data=data
+        self.save()
+
+    def _load_cpu_data(self):
+        pass
 
     class Meta:
         verbose_name = 'Комплектующие и устройства'
@@ -233,4 +246,14 @@ class Component(models.Model):
         return self.name
 
 
+class Image(models.Model):
+    component = models.ForeignKey(Component)
+    picture = CloudinaryField('imaaaaage', blank=True, null=True)
 
+    # """ Informative name for mode """
+    # def __str__(self):
+    #     try:
+    #         public_id = self.image.public_id
+    #     except AttributeError:
+    #         public_id = ''
+    #     return "Photo <%s:%s>" % (self.title, public_id)

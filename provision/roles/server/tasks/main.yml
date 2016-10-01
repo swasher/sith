@@ -28,3 +28,18 @@
   lineinfile: dest=/etc/environment
               line='DATABASE_PASSWORD={{db_password}}'
   become: yes
+
+- name: Set cloudinary cloud name
+  lineinfile: dest=/etc/environment
+              line='COUDINARY_CLOUD_NAME={{coudinary_cloud_name}}'
+  become: yes
+
+- name: Set cloudinary cloud name
+  lineinfile: dest=/etc/environment
+              line='CLOUDINARY_API_KEY={{cloudinary_api_key}}'
+  become: yes
+
+- name: Set cloudinary cloud name
+  lineinfile: dest=/etc/environment
+              line='CLOUDINARY_API_SECRET={{cloudinary_api_secret}}'
+  become: yes

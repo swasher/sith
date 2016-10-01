@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.postgres',
+    'cloudinary',
     'django_hstore',
     'mptt',
     'inventory',
@@ -167,3 +168,9 @@ MESSAGE_TAGS = {message_constants.DEBUG: 'debug',
 #
 
 SERIALIZATION_MODULES = {'yaml': 'serializers.yaml'}
+
+CLOUDINARY = {
+    'cloud_name' : os.getenv('COUDINARY_CLOUD_NAME'),
+    'api_key' : os.getenv('CLOUDINARY_API_KEY'),
+    'api_secret': os.getenv('CLOUDINARY_API_SECRET'),
+}

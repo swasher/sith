@@ -53,3 +53,8 @@ backup_user:       "{{ vault_backup_user }}"
 # Keys stored as multiline variables
 # {{staging_private_key_content}}
 # {{staging_public_key_content}}
+
+# for cloudinary API
+cloudinary_cloud_name:  "{{ vault_cloudinary_cloud_name }}"
+cloudinary_api_key:     "{{ vault_cloudinary_api_key }}"
+cloudinary_api_secret:  "{{ vault_cloudinary_api_secret }}"

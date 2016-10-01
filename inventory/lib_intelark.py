@@ -81,6 +81,13 @@ def generate_dict_data(html_output):
 
     return table_data
 
+def load_cpu_data(url):
+    """
+    Must return a dict with CPU data
+    :param url:
+    :return:
+    """
+    pass
 
 if __name__ == '__main__':
     p0 = "E5300"

@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.admin import widgets
 from time import gmtime, strftime
 from django.contrib import messages
-from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
+from django.contrib.admin.templatetags.admin_urls import add_preserved_filters, register
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.utils.safestring import mark_safe
@@ -14,6 +14,7 @@ from inventory.models import Component
 from inventory.models import SpareType
 from inventory.models import Property
 from inventory.models import Manufacture
+from inventory.models import Image
 
 
 # class ComputerProxy(Container):
@@ -107,6 +108,13 @@ class SpareTypeAdmin(admin.ModelAdmin):
     #fields = ['name']
 
 
+class ImagesAdminInline(admin.TabularInline):
+    model = Image
+    max_num = 1
+    #fields = ( 'image_tag', )
+    #readonly_fields = ('image_tag',)
+
+
 class ComponentAdmin(admin.ModelAdmin):
 
     def response_change(self, request, obj):
@@ -120,24 +128,24 @@ class ComponentAdmin(admin.ModelAdmin):
         pk_value = obj._get_pk_val()
         preserved_filters = self.get_preserved_filters(request)
 
-        if "_load_properties" in request.POST:
-            properties  = Property.objects.filter(sparetype__pk=obj.sparetype_id)
-
-            data = dict()
-            for prop in properties:
-                data[prop.name] = ''
-            obj.data=data
-            obj.save()
+        def return_url():
             redirect_url = reverse('admin:%s_%s_change' %
                                (opts.app_label, opts.model_name),
                                args=(pk_value,),
                                current_app=self.admin_site.name)
             redirect_url = add_preserved_filters({'preserved_filters': preserved_filters, 'opts': opts}, redirect_url)
             return HttpResponseRedirect(redirect_url)
+
+        if "_load_component_properties" in request.POST:
+            obj.load_properties()
+            return return_url()
+        elif "_load_cpu_data" in request.POST:
+            obj.load_cpu_data()
+            return return_url()
         else:
             return super(ComponentAdmin, self).response_change(request, obj)
 
-    readonly_fields  = ('link_to_parent_computer',)
+
 
     def link_to_parent_computer(self, instance):
         from django.utils.html import format_html
@@ -149,13 +157,20 @@ class ComponentAdmin(admin.ModelAdmin):
     #link_to_parent_computer.short_description = "Link to parent computer"
 
     list_display=['name', 'sparetype', 'container']  # это поля в виде списка
-    #fields = ['link_to_parent_computer', 'name', 'warranty', 'description']    # это поля для формы редактирования
     fields = ['link_to_parent_computer', 'name', 'container', 'sparetype', 'manufacture', 'model', 'purchase_date',
               'store', 'warranty', 'serialnumber', 'description', 'price_uah', 'price_usd', 'iscash', 'invoice',
-              'product_page', 'data']
+              'product_page', 'data'] # это поля для формы редактирования. Перечисление всех полей необходимо для того,
+                                      # чтобы поле link_to_parent_computer было в начале списка.
 
-    #list_editable
+    readonly_fields  = ['link_to_parent_computer']
     ordering = ['sparetype']
+    inlines = [ImagesAdminInline]
+
+
+#from django.contrib.admin.templatetags.admin_modify import submit_row
+
+
+
 
 admin.site.site_header = 'SITH'
 

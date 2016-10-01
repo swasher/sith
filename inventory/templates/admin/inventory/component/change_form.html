@@ -3,8 +3,14 @@
 {% block after_related_objects %}
 
   <div class="submit-row">
-    {#  _load_properties handled by inventory/admin.py, class 'ComponentAdmin', method 'response_change' #}
-    <input type="submit" value="Load properties" class="default" name="_load_properties" />
+
+    {% if original.sparetype.name == 'cpu' %}
+      <input type="submit" value="Load CPU data" class="default" name="_load_cpu_data" />
+    {% endif %}
+
+    {#  _load_component_properties handled by inventory/admin.py, class 'ComponentAdmin', method 'response_change' #}
+    <input type="submit" value="Load component properties" class="default" name="_load_component_properties" />
+
   </div>
 
 {% endblock %}
