@@ -13,7 +13,12 @@ http://products.amd.com/en-us/search?k=DesktopProcessors#k=a8-7650K
 --->
 http://products.amd.com/en-us/search/APU/AMD-A-Series-Processors/AMD-A8-Series-APU-for-Desktops/A8-7650K-with-Radeon%E2%84%A2-R7-Graphics-and-Near-Silent-Thermal-Solution/176
 
+По Intel Ark
+============================
 
+- Recommended Customer Price (RPC) - это примерная цена, указанная для 1000 юнитов. Если две цены, это OEM/BOX
+- Отсутствует инфа Microarchitecture (Codename) - Haswell, Skylake, etc
+- На вкладке Ordering можно найти Spec code (SR14E) и Ordering code (BX80646I54570), которые точно определяют процессор.
 
 Linux hardware info
 ============================

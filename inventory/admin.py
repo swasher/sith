@@ -124,11 +124,11 @@ class ComponentAdmin(admin.ModelAdmin):
         Если поле hstore что-то содержало, то содержимое удаляется.
         """
 
-        opts = self.model._meta
-        pk_value = obj._get_pk_val()
-        preserved_filters = self.get_preserved_filters(request)
+        def return_url(self):
+            opts = self.model._meta
+            pk_value = obj._get_pk_val()
+            preserved_filters = self.get_preserved_filters(request)
 
-        def return_url():
             redirect_url = reverse('admin:%s_%s_change' %
                                (opts.app_label, opts.model_name),
                                args=(pk_value,),
@@ -138,10 +138,10 @@ class ComponentAdmin(admin.ModelAdmin):
 
         if "_load_component_properties" in request.POST:
             obj.load_properties()
-            return return_url()
+            return return_url(self)
         elif "_load_cpu_data" in request.POST:
             obj.load_cpu_data()
-            return return_url()
+            return return_url(self)
         else:
             return super(ComponentAdmin, self).response_change(request, obj)
 

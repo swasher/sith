@@ -9,6 +9,8 @@ from django_hstore import hstore
 from django.core.exceptions import ObjectDoesNotExist
 from .speccy import parse_speccy
 from cloudinary.models import CloudinaryField
+from .intelark import load_intel_data
+from .cpuworld import load_amd_data
 
 DATATYPE_CHOICES = (
 ('IntegerField', 'IntegerField'),
@@ -173,59 +175,6 @@ class Component(models.Model):
 
     data = hstore.DictionaryField(blank=True)  # can pass attributes like null, blank, etc.
 
-    # для чего это было в примере в офф мануале?
-    # objects = hstore.HStoreManager()
-
-    # DEPRECATED
-    # TODO Может сделать отдельную кнопку, типа сгенерить нужные поля?
-    # Функция рабочая, но мешает загрузку данных из speccy, так как оверрайдит save
-    # def save(self, *args, **kwargs):
-    #     """
-    #     Эта функция заполняет hstore пустыми полями в соответствии с введенным типом Компонента.
-    #     Поля берутся из таблицы SpareType
-    #     """
-    #     try:
-    #         # check if this Part already exist and just edited, or it newly created
-    #         _ = Component.objects.get(id=self.id)
-    #     except ObjectDoesNotExist:
-    #         # if raise exception, it means that record is newly created,
-    #         # - and now is time to create properties
-    #         if getattr(self, 'unit_type', True):
-    #             # получаем тип юнита self.description = self.unit_type.name
-    #             # получаем объект kind = Kind.objects.get(id=self.id)
-    #             # получаем объект property  = Property.objects.get(kind=self.id)
-    #             properties  = Property.objects.filter(sparetype__pk=self.unit_type_id)
-    #
-    #             data = dict()
-    #             for prop in properties:
-    #                 data[prop.name] = ''
-    #             self.data = data
-    #     else:
-    #         # TODO как быть, если юзер хочет сменить ТИП юнита?
-    #         # Можно либо ДОБАВИТЬ новые поля поля, создав кашу,
-    #         # либо стереть старые поля вместе с данными и добавить новые поля
-    #         pass
-    #     super(Component, self).save(*args, **kwargs)
-
-    # DEPRECATED
-    # def load_properties(self, *args, **kwargs):
-    #     """
-    #       Эта функция заменяет метод save модели, сохраняя поля Комплектующего, которые заполнил пользователь,
-    #       затем стирет все текущие поля и их значения hstore и создает новые, согласно Типу Комплектующего
-    #       из таблицы SpareType
-    #     """
-    #     if getattr(self, 'unit_type', True):
-    #         # получаем тип юнита self.description = self.unit_type.name
-    #         # получаем объект kind = Kind.objects.get(id=self.id)
-    #         # получаем объект property  = Property.objects.get(kind=self.id)
-    #         properties  = Property.objects.filter(sparetype__pk=self.unit_type_id)
-    #
-    #         data = dict()
-    #         for prop in properties:
-    #             data[prop.name] = ''
-    #         self.data = data
-    #     super(Component, self).save(*args, **kwargs)
-
     def load_properties(self):
         properties  = Property.objects.filter(sparetype__pk=self.sparetype_id)
 
@@ -235,8 +184,18 @@ class Component(models.Model):
         self.data=data
         self.save()
 
-    def _load_cpu_data(self):
-        pass
+    def load_cpu_data(self):
+        if self.product_page:
+            if self.manufacture.name == 'Intel':
+                cpu_data = load_intel_data(self.product_page)
+                self.data = cpu_data
+                self.save()
+            elif self.manufacture.name == 'AMD':
+                cpu_data = load_amd_data(self.product_page)
+                self.data = cpu_data
+                self.save()
+            else:
+                pass
 
     class Meta:
         verbose_name = 'Комплектующие и устройства'
@@ -248,7 +207,7 @@ class Component(models.Model):
 
 class Image(models.Model):
     component = models.ForeignKey(Component)
-    picture = CloudinaryField('imaaaaage', blank=True, null=True)
+    picture = CloudinaryField('Фото компонента', blank=True, null=True)
 
     # """ Informative name for mode """
     # def __str__(self):
