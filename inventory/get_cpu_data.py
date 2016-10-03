@@ -24,10 +24,10 @@ def get_amd_html(url):
     #driver = webdriver.PhantomJS('/usr/local/lib/node_modules/phantomjs2/lib/phantom/bin/phantomjs')
     #driver = webdriver.PhantomJS('/app/node_modules/.bin/phantomjs') # heroku, must be in $PATH
     #driver = webdriver.PhantomJS('/app/vendor/phantomjs/bin/phantomjs') # heroku
-
-    driver = settings.PHANTOMJS
-
     #driver = webdriver.PhantomJS('/usr/local/lib/node_modules/phantomjs2/lib/phantom/bin/phantomjs') # local path
+
+    path_to_executable = settings.PHANTOMJS
+    driver = webdriver.PhantomJS(path_to_executable)
 
     driver.get(url)
     sleep(1)
