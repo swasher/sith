@@ -43,3 +43,8 @@
   lineinfile: dest=/etc/environment
               line='CLOUDINARY_API_SECRET={{cloudinary_api_secret}}'
   become: yes
+
+- name: Set Debug
+  lineinfile: dest=/etc/environment
+              line='DEBUG=True'
+  become: yes

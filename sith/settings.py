@@ -35,7 +35,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #
 # ENVIRONMENT SETUP
 #
-DEBUG = False if PRODUCTION else True
+DEBUG = os.getenv('DEBUG')
+PHANTOMJS = os.getenv('PHANTOMJS')
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
