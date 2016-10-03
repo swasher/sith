@@ -24,7 +24,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'collect_static')
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS =[
-    #'static',
     'bower_components'
 ]
 
@@ -36,8 +35,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #
 # ENVIRONMENT SETUP
 #
-#DEBUG = False if PRODUCTION else True
-DEBUG = True
+DEBUG = False if PRODUCTION else True
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 

@@ -6,6 +6,7 @@ vault_password
 
 # Файлы, создаваемые приложением
 *.pyc
+*.log
 *.retry
 __pycache__/
 .idea/

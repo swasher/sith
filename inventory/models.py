@@ -9,8 +9,7 @@ from django_hstore import hstore
 from django.core.exceptions import ObjectDoesNotExist
 from .speccy import parse_speccy
 from cloudinary.models import CloudinaryField
-from .intelark import load_intel_data
-from .cpuworld import load_amd_data
+from .get_cpu_data import cpu_data
 
 DATATYPE_CHOICES = (
 ('IntegerField', 'IntegerField'),
@@ -186,16 +185,12 @@ class Component(models.Model):
 
     def load_cpu_data(self):
         if self.product_page:
-            if self.manufacture.name == 'Intel':
-                cpu_data = load_intel_data(self.product_page)
-                self.data = cpu_data
+            data = cpu_data(self.product_page)
+            if data:
+                self.data = data
                 self.save()
-            elif self.manufacture.name == 'AMD':
-                cpu_data = load_amd_data(self.product_page)
-                self.data = cpu_data
-                self.save()
-            else:
-                pass
+        else:
+            pass
 
     class Meta:
         verbose_name = 'Комплектующие и устройства'
