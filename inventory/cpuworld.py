@@ -30,7 +30,10 @@ from selenium import webdriver
 from time import sleep
 
 def get_cpu_html(url):
-    driver = webdriver.PhantomJS('/usr/local/lib/node_modules/phantomjs2/lib/phantom/bin/phantomjs')
+    #driver = webdriver.PhantomJS('/usr/local/lib/node_modules/phantomjs2/lib/phantom/bin/phantomjs_')
+    #driver = webdriver.PhantomJS('/app/node_modules/.bin/phantomjs') # heroku, must be in $PATH
+    #driver = webdriver.PhantomJS('/app/vendor/phantomjs/bin/phantomjs') # heroku
+    driver = webdriver.PhantomJS()
     driver.get(url)
     sleep(1)
     html = driver.page_source
