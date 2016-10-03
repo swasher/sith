@@ -26,11 +26,12 @@ def get_amd_html(url):
     #driver = webdriver.PhantomJS('/app/vendor/phantomjs/bin/phantomjs') # heroku
     #driver = webdriver.PhantomJS('/usr/local/lib/node_modules/phantomjs2/lib/phantom/bin/phantomjs') # local path
 
-    path_to_executable = settings.PHANTOMJS
-    driver = webdriver.PhantomJS(path_to_executable)
+    phantomjs_path = settings.PHANTOMJS
+    service_args = ['--load-images=no']
+    driver = webdriver.PhantomJS(executable_path=phantomjs_path, service_args=service_args)
 
     driver.get(url)
-    sleep(1)
+    sleep(2)
     html = driver.page_source
     driver.quit()
     return html

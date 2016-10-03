@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+import ast
 import dj_database_url
 
 
@@ -35,7 +36,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #
 # ENVIRONMENT SETUP
 #
-DEBUG = os.getenv('DEBUG')
+DEBUG = ast.literal_eval(os.getenv('DEBUG'))
 PHANTOMJS = os.getenv('PHANTOMJS')
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
