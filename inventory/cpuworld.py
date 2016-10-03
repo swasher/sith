@@ -2,11 +2,17 @@
 
 # parser for www.cpu-world.com, using for AMD processors
 
-import sys
-import dryscrape
+
 from bs4 import BeautifulSoup
 
+"""
+# Это полностью рабочая функция фетчинга страницы с данными, генерируемыми ява-скриптами.
+# Возвращает html.
+# В ней используется библиотека dryscrape, которая требует в зависимостях кучу бинарников,
+# и из-за этого ее не получается установить на heroku
 
+import sys
+import dryscrape
 def get_cpu_html(url):
     if 'linux' in sys.platform:
         # start xvfb in case no X is running. Make sure xvfb
@@ -18,7 +24,18 @@ def get_cpu_html(url):
     html = session.body()
 
     return html
+"""
 
+from selenium import webdriver
+from time import sleep
+
+def get_cpu_html(url):
+    driver = webdriver.PhantomJS('/usr/local/lib/node_modules/phantomjs2/lib/phantom/bin/phantomjs')
+    driver.get(url)
+    sleep(1)
+    html = driver.page_source
+    driver.quit()
+    return html
 
 def generate_dict_data(html_input):
     """Generate a dictionary based on the HTML provided."""

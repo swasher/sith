@@ -6,15 +6,13 @@ dj-database-url==0.4.1
 django-debug-toolbar==1.5
 django-hstore==1.4.2
 django-mptt==0.8.3
-dryscrape==1.0
 gunicorn==19.6.0
 html5lib==0.999999999
 lxml==3.6.0
 psycopg2==2.6.1
 requests==2.11.1
+selenium==2.53.6
 six==1.10.0
 sqlparse==0.2.1
 webencodings==0.5
-webkit-server==1.0
 whitenoise==3.2.1
-xvfbwrapper==0.2.8

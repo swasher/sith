@@ -17,7 +17,7 @@ def get_cpu_html(url):
 
 def generate_dict_data(html_input):
     """Generate a dictionary based on the HTML provided."""
-    soup = BeautifulSoup(html_input, 'html.parser')
+    soup = BeautifulSoup(html_input, 'html5lib')
     data = dict()
 
     # Выбираем из всего списка свойств только нужные
