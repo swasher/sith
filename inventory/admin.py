@@ -1,27 +1,18 @@
-import django_hstore
 from django.contrib import admin
-from django.contrib.admin import widgets
 from time import gmtime, strftime
 from django.contrib import messages
-from django.contrib.admin.templatetags.admin_urls import add_preserved_filters, register
+from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.utils.safestring import mark_safe
 from mptt.admin import MPTTModelAdmin
-from mptt.admin import DraggableMPTTAdmin
 from inventory.models import Store, Container, Computer
 from inventory.models import Component
 from inventory.models import SpareType
 from inventory.models import Property
 from inventory.models import Manufacture
 from inventory.models import Image
+from .forms import ImageForm
 
-
-# class ComputerProxy(Container):
-#     class Meta:
-#         proxy = True
-#         verbose_name = "Компьютер"
-#         verbose_name_plural = "Компьютеры"
 
 class ComputerAdminInline(admin.StackedInline):
     model = Container
@@ -36,6 +27,7 @@ class ComputerAdminInline(admin.StackedInline):
     def get_queryset(self, request):
         qs = super(ComputerAdminInline, self).get_queryset(request)
         return qs.filter(kind='PC')
+
 
 class ComponentAdminInline(admin.StackedInline):
     model = Component
@@ -64,15 +56,6 @@ class ContainerMPTTAdmin(MPTTModelAdmin):
         return qs.exclude(kind='PC')
 
     inlines = [ComputerAdminInline, ComponentAdminInline]
-
-# class AllContainerTree(Container):
-#     class Meta:
-#         proxy = True
-#
-# class AllContainerTreeMPTTAdmin(MPTTModelAdmin):
-#     list_display_links = ()
-#     def has_add_permission(self, request):
-#         return False
 
 
 class ComputerMPTTAdmin(admin.ModelAdmin):
@@ -108,11 +91,16 @@ class SpareTypeAdmin(admin.ModelAdmin):
     #fields = ['name']
 
 
-class ImagesAdminInline(admin.TabularInline):
+class ImagesAdminInline(admin.StackedInline):
     model = Image
-    max_num = 1
+    #max_num = 3
+    extra = 0
     #fields = ( 'image_tag', )
-    #readonly_fields = ('image_tag',)
+    #readonly_fields = ('metatag_caption',)
+    #fields = ['picture', 'component']
+    form = ImageForm
+    template = "admin/inventory/image/edit_inline/tabular-inline-for-cloudinary-images.html"
+    # Целиком инлайн рисуется в stacked.html или tabular.html, но сами строки - admin/includes/fieldset.html
 
 
 class ComponentAdmin(admin.ModelAdmin):
@@ -123,7 +111,6 @@ class ComponentAdmin(admin.ModelAdmin):
         Заполняет поле hstore согласно типу комплектующего.
         Если поле hstore что-то содержало, то содержимое удаляется.
         """
-
         def return_url(self):
             opts = self.model._meta
             pk_value = obj._get_pk_val()
@@ -145,8 +132,6 @@ class ComponentAdmin(admin.ModelAdmin):
         else:
             return super(ComponentAdmin, self).response_change(request, obj)
 
-
-
     def link_to_parent_computer(self, instance):
         from django.utils.html import format_html
         ancestor = instance.container.id
@@ -167,14 +152,8 @@ class ComponentAdmin(admin.ModelAdmin):
     inlines = [ImagesAdminInline]
 
 
-#from django.contrib.admin.templatetags.admin_modify import submit_row
-
-
-
-
 admin.site.site_header = 'SITH'
 
-# admin.site.register(AllContainerTree, AllContainerTreeMPTTAdmin)
 admin.site.register(Container, ContainerMPTTAdmin)
 admin.site.register(Computer, ComputerMPTTAdmin)
 admin.site.register(Component, ComponentAdmin)

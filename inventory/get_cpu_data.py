@@ -27,6 +27,7 @@ def get_amd_html(url):
     #driver = webdriver.PhantomJS('/usr/local/lib/node_modules/phantomjs2/lib/phantom/bin/phantomjs') # local path
 
     phantomjs_path = settings.PHANTOMJS
+    #phantomjs_path = '/usr/local/lib/node_modules/phantomjs2/lib/phantom/bin/phantomjs'
     service_args = ['--load-images=no']
     driver = webdriver.PhantomJS(executable_path=phantomjs_path, service_args=service_args)
 
@@ -81,23 +82,20 @@ def generate_amd_data(html_input):
                  'Manufacturing process', 'Data width', 'The number of CPU cores', 'The number of threads',
                  'Integrated graphics', 'Thermal Design Power']
 
+    data = OrderedDict()
+
     table = soup.find('table', attrs={'class':'spec_table'})
     table_body = table.find('tbody')
-
-    data = OrderedDict()
     rows = table_body.find_all('tr')
-
     for row in rows[1:-2]:
         cols = row.find_all('td')
         cols = [ele.text.strip() for ele in cols]
         cols = [ele.replace(u' \xa0?', u'') for ele in cols]
 
-        #print(cols)
         if len(cols) == 2:                                         # we need only two-column information
             if cols[0] in need_list:
                 data[cols[0]] = ', '.join(cols[1].splitlines())    # replace multiline with comma
-                #print(cols[0], cols[1])
-
+    print(type(data))
     return data
 
 
@@ -116,6 +114,7 @@ def cpu_data(url):
     else:
         data = None
 
+    print(type(data))
     return data
 
 

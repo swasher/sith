@@ -48,3 +48,8 @@
   lineinfile: dest=/etc/environment
               line='DEBUG=True'
   become: yes
+
+- name: Set phantomjs path
+  lineinfile: dest=/etc/environment
+              line='PHANTOMJS=/usr/local/lib/node_modules/phantomjs2/lib/phantom/bin/phantomjs'
+  become: yes

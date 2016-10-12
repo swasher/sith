@@ -1,16 +1,25 @@
 {% extends "admin/change_form.html" %}
 {% load i18n admin_urls %}
+{% load static %}
+
+{#POSSIBLY DEPRECATED#}
+{# Блок включает CSS для кастомизации отображения списка картинок на странице редактирования компонента.#}
+{% block extrastyle %}
+
+  {{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "inline_images_upload.css" %}" />
+
+{% endblock %}
+
+
 {% block after_related_objects %}
 
-  <div class="submit-row">
+<div class="submit-row">
+  {% if original.sparetype.name == 'cpu' %}
+    <input type="submit" value="Load CPU data" class="default" name="_load_cpu_data" />
+  {% endif %}
 
-    {% if original.sparetype.name == 'cpu' %}
-      <input type="submit" value="Load CPU data" class="default" name="_load_cpu_data" />
-    {% endif %}
-
-    {#  _load_component_properties handled by inventory/admin.py, class 'ComponentAdmin', method 'response_change' #}
-    <input type="submit" value="Load component properties" class="default" name="_load_component_properties" />
-
-  </div>
+  {#  _load_component_properties handled by inventory/admin.py, class 'ComponentAdmin', method 'response_change' #}
+  <input type="submit" value="Load component properties" class="default" name="_load_component_properties" />
+</div>
 
 {% endblock %}

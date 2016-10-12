@@ -1,15 +1,21 @@
+from django import forms
 from django.contrib import messages
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.contrib.postgres.fields import HStoreField
+from django.dispatch import receiver
+from django.template import Template
 from django.utils.safestring import mark_safe
 from mptt.models import MPTTModel, TreeForeignKey, TreeOneToOneField
 from django_hstore import hstore
 from django.core.exceptions import ObjectDoesNotExist
 from .speccy import parse_speccy
+import cloudinary
 from cloudinary.models import CloudinaryField
+#from cloudinary.api import resource
 from .get_cpu_data import cpu_data
+from .widgets import AdminCloudinaryWidget
 
 DATATYPE_CHOICES = (
 ('IntegerField', 'IntegerField'),
@@ -184,10 +190,14 @@ class Component(models.Model):
         self.save()
 
     def load_cpu_data(self):
+        import sys
         if self.product_page:
-            data = cpu_data(self.product_page)
-            if data:
-                self.data = data
+            info = cpu_data(self.product_page)
+            if info:
+                #self.data = info
+                for key, value in info.items():
+                    print(sys.stderr, key)
+                    self.data[key] = value
                 self.save()
         else:
             pass
@@ -200,14 +210,55 @@ class Component(models.Model):
         return self.name
 
 
-class Image(models.Model):
-    component = models.ForeignKey(Component)
-    picture = CloudinaryField('Фото компонента', blank=True, null=True)
+class MyCloudinaryField(CloudinaryField):
+    def upload_options(self, model_instance):
+       return {'folder': 'inventory',
+               'tags': [model_instance.component.name],
+               'context': {'caption': model_instance.component.name, 'alt': 'место для доп. информации'}
+               }
 
-    # """ Informative name for mode """
-    # def __str__(self):
-    #     try:
-    #         public_id = self.image.public_id
-    #     except AttributeError:
-    #         public_id = ''
-    #     return "Photo <%s:%s>" % (self.title, public_id)
+
+class Image(models.Model):
+
+    component = models.ForeignKey(Component)
+    picture = MyCloudinaryField('', blank=True, null=True)
+
+    @property
+    def metatag(self):
+        try:
+            resource = cloudinary.api.resource(self.picture.public_id)
+        except cloudinary.api.NotFound:
+            return {'tag':'', 'caption':'', 'alt':''}
+
+        try:
+            tag = resource['tags'][0]
+        except:
+            tag = ''
+
+        try:
+            alt = resource['context']['custom']['alt']
+        except:
+            alt = ''
+
+        try:
+            caption = resource['context']['custom']['caption']
+        except:
+            caption = ''
+
+        return {'tag':tag, 'caption':caption, 'alt':alt}
+
+    def metatag_caption(self):
+        try:
+            resource = cloudinary.api.resource(self.picture.public_id)
+            caption = resource['context']['custom']['caption']
+        except cloudinary.api.NotFound:
+            caption = ''
+
+        return caption
+
+    def __str__(self):
+        try:
+            public_id = self.picture.public_id
+        except AttributeError:
+            public_id = ''
+        return "{} with Public_id: {}".format(self.component.name, public_id)
