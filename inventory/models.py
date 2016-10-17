@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib import messages
+from django.conf import settings
+from django.core import urlresolvers
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -212,10 +214,24 @@ class Component(models.Model):
 
 class MyCloudinaryField(CloudinaryField):
     def upload_options(self, model_instance):
-       return {'folder': 'inventory',
-               'tags': [model_instance.component.name],
-               'context': {'caption': model_instance.component.name, 'alt': 'место для доп. информации'}
-               }
+        try:
+            domain = settings.DOMAIN
+            url = urlresolvers.reverse('admin:inventory_component_change', args=(model_instance.component.id,))
+            link = '{}{}'.format(domain, url)
+        except:
+            link = None
+
+        tags = {'folder': 'inventory',
+                'tags': [model_instance.component.name],
+                'context': {'caption': model_instance.component.name,
+                            'alt': 'место для доп. информации'
+                            }
+                }
+
+        if link:
+            tags['context'].update({'link': link})
+
+        return tags
 
 
 class Image(models.Model):

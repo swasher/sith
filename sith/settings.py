@@ -40,6 +40,7 @@ DEBUG = ast.literal_eval(os.getenv('DEBUG'))
 PHANTOMJS = os.getenv('PHANTOMJS')
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+DOMAIN = os.getenv('DOMAIN')
 
 
 

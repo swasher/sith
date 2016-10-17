@@ -53,3 +53,8 @@
   lineinfile: dest=/etc/environment
               line='PHANTOMJS=/usr/local/lib/node_modules/phantomjs2/lib/phantom/bin/phantomjs'
   become: yes
+
+- name: Set server domain
+  lineinfile: dest=/etc/environment
+              line='DOMAIN=sith:8000'
+  become: yes
