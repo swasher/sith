@@ -1,23 +1,18 @@
-from django import forms
-from django.contrib import messages
+import sys
+import cloudinary
 from django.conf import settings
 from django.core import urlresolvers
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.contrib.postgres.fields import HStoreField
+from django.contrib.contenttypes.models import ContentType
+from django.db.models.signals import post_delete
 from django.dispatch import receiver
-from django.template import Template
-from django.utils.safestring import mark_safe
-from mptt.models import MPTTModel, TreeForeignKey, TreeOneToOneField
+from mptt.models import MPTTModel, TreeForeignKey
 from django_hstore import hstore
-from django.core.exceptions import ObjectDoesNotExist
-from .speccy import parse_speccy
-import cloudinary
 from cloudinary.models import CloudinaryField
-#from cloudinary.api import resource
+from cloudinary.uploader import destroy
 from .get_cpu_data import cpu_data
-from .widgets import AdminCloudinaryWidget
+from .speccy import parse_speccy
+
 
 DATATYPE_CHOICES = (
 ('IntegerField', 'IntegerField'),
@@ -192,13 +187,18 @@ class Component(models.Model):
         self.save()
 
     def load_cpu_data(self):
-        import sys
+        # При загрузке данных о CPU из интернета страые поля сохраняются, но
+        # только те, которые были не с пустым значением.
+        if self.data:
+            removed_empty_values = dict((k, v) for k, v in self.data.items() if v)
+            self.data = removed_empty_values
+            self.save()
+
         if self.product_page:
             info = cpu_data(self.product_page)
             if info:
                 #self.data = info
                 for key, value in info.items():
-                    print(sys.stderr, key)
                     self.data[key] = value
                 self.save()
         else:
@@ -214,19 +214,20 @@ class Component(models.Model):
 
 class MyCloudinaryField(CloudinaryField):
     def upload_options(self, model_instance):
+
+        tags = {'folder': 'inventory',
+                'tags': [model_instance.component.name],
+                'context': {'caption': model_instance.component.name,
+                            'alt': model_instance.component.name,
+                            }
+                }
+
         try:
             domain = settings.DOMAIN
             url = urlresolvers.reverse('admin:inventory_component_change', args=(model_instance.component.id,))
             link = '{}{}'.format(domain, url)
         except:
             link = None
-
-        tags = {'folder': 'inventory',
-                'tags': [model_instance.component.name],
-                'context': {'caption': model_instance.component.name,
-                            'alt': 'место для доп. информации'
-                            }
-                }
 
         if link:
             tags['context'].update({'link': link})
@@ -278,3 +279,11 @@ class Image(models.Model):
         except AttributeError:
             public_id = ''
         return "{} with Public_id: {}".format(self.component.name, public_id)
+
+
+@receiver(post_delete, sender=Image)
+def purge_cloudinary(sender, instance, **kwargs):
+    """Deletes file from cloudinary
+    when corresponding `Image` object is deleted.
+    """
+    destroy(instance.picture.public_id)

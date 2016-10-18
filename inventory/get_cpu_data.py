@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # coding: utf-8
-# Inspired by github.com/major/arksearch
-from collections import OrderedDict
 
 from django.conf import settings
 import requests
@@ -82,7 +80,7 @@ def generate_amd_data(html_input):
                  'Manufacturing process', 'Data width', 'The number of CPU cores', 'The number of threads',
                  'Integrated graphics', 'Thermal Design Power']
 
-    data = OrderedDict()
+    data = dict()
 
     table = soup.find('table', attrs={'class':'spec_table'})
     table_body = table.find('tbody')

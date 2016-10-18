@@ -16,14 +16,25 @@ class AdminCloudinaryWidget(AdminFileWidget):
 
     def render(self, name, value, attrs=None):
         output = []
+
         if value and getattr(value, "url", None):
+
+            try:
+                caption = cloudinary.api.resource(value.public_id)['context']['custom']['caption']
+            except (cloudinary.api.NotFound, KeyError):
+                caption = '<br>'
+
+            try:
+                alt = cloudinary.api.resource(value.public_id)['context']['custom']['alt']
+            except cloudinary.api.NotFound:
+                alt = ''
 
             picture_preview = cloudinary.CloudinaryImage(value.public_id).image(format='JPG', width = 150, height = 150, crop = 'fill', alt = "Sample Image")
             picture_full = cloudinary.CloudinaryImage(value.public_id).build_url()
-            picture = '<a href={}  target="_blank">{}</a>'.format(picture_full, picture_preview)
+            picture = '<a href={}  target="_blank" alt="{}">{}</a>'.format(picture_full, alt, picture_preview)
             cloudinary_link = '<a href="https://cloudinary.com/console/media_library#/dialog/image/upload/{}" target="_blank">Cloudinary Link</a>'.format(value.public_id)
 
-            output.append('<div class="cloudinary-image">{}</div><div>{}</div>'.format(picture, cloudinary_link))
+            output.append('<div>{}</div> <div class="cloudinary-image">{}</div><div>{}</div>'.format(caption, picture, cloudinary_link))
 
         output.append(super(AdminFileWidget, self).render(name, value, attrs))
         return mark_safe(u''.join(output))

@@ -62,9 +62,10 @@ INSTALLED_APPS = [
 
 if not PRODUCTION:
     INSTALLED_APPS.append('debug_toolbar')
-    INTERNAL_IPS = '172.28.128.3'
+    INTERNAL_IPS = '172.28.128.10'
 
 MIDDLEWARE_CLASSES = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -104,9 +105,6 @@ WSGI_APPLICATION = 'sith.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        #'NAME': sith.secrets.DATABASE_NAME,
-        #'USER': sith.secrets.DATABASE_USER,
-        #'PASSWORD': sith.secrets.DATABASE_PASSWORD,
         'NAME': os.environ.get('DATABASE_NAME', ''),
         'USER': os.environ.get('DATABASE_USER', ''),
         'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
