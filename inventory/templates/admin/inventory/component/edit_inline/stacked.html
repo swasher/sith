@@ -5,24 +5,28 @@
 {{ inline_admin_formset.formset.non_form_errors }}
 
 <style type="text/css">
-    .inlinechangelink {
-        padding-right: 10px;
-        text-align-all: right;
-        background-color: #00b3ee;
-        background: url(../img/icon-changelink.svg) 0 1px no-repeat;
-    }
-    .changing {
-        display: inline-block;
-        position: relative;
-        float: right;
-    }
-    .type {
-        display: inline-block;
-        -webkit-column-width: 200px;
-    }
-    .title {
-        display: inline-block;
-    }
+  .inlinechangelink {
+      padding-right: 10px;
+      text-align-all: right;
+      background-color: #00b3ee;
+      background: url(../img/icon-changelink.svg) 0 1px no-repeat;
+  }
+  .changing {
+      display: inline-block;
+      position: relative;
+      float: right;
+  }
+  .type {
+      display: inline-block;
+      -webkit-column-width: 200px;
+  }
+  .title {
+      display: inline-block;
+  }
+  div.has_original fieldset.module.aligned {
+{#    visibility: collapse;#}
+    display: none;
+  }
 </style>
 
 {% for inline_admin_form in inline_admin_formset %}
@@ -90,15 +94,15 @@
 
         </h3>
 
-    {% if inline_admin_form.form.non_field_errors %}
-        {{ inline_admin_form.form.non_field_errors }}
-    {% endif %}
+        {% if inline_admin_form.form.non_field_errors %}
+            {{ inline_admin_form.form.non_field_errors }}
+        {% endif %}
 
-    {% comment %} comment by swasher: remove field list for each computer's component; leave only name in head
+{#     comment by swasher: remove field list for each computer's component; leave only name in head#}
         {% for fieldset in inline_admin_form %}
         {% include "admin/includes/fieldset.html" %}
         {% endfor %}
-    {% endcomment %}
+
 
     {% if inline_admin_form.needs_explicit_pk_field %}
         {{ inline_admin_form.pk_field.field }}

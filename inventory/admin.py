@@ -68,9 +68,9 @@ class ComputerMPTTAdmin(admin.ModelAdmin):
     # Эта функция позволяет выводить разные наборы полей для создания и для редактирования объекта Компьютер
     def get_form(self, request, obj=None, **kwargs):
         # Proper kwargs are form, fields, exclude, formfield_callback
-        if obj: # obj is not None, so this is a change page
+        if obj: # obj is not None, so this is a "change already exist" page
             kwargs['exclude'] = ['kind']
-        else: # obj is None, so this is an add page
+        else: # obj is None, so this is an "add new" page
             kwargs['fields'] = ['name', 'notice', 'parent', 'speccy']
         return super(ComputerMPTTAdmin, self).get_form(request, obj, **kwargs)
 
