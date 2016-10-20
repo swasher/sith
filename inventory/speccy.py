@@ -85,11 +85,16 @@ def parse_speccy(speccy_xml):
             feature = dict()
             model_on_videocard = leaf.xpath('entry[@title="Name"]')[0].get('value')
             model_match = re.match(r'(.*)\son\s', model_on_videocard)
-            feature['model'] = model_match.group(1)
+            try:
+                feature['model'] = model_match.group(1)
+            except AttributeError: pass
             feature['native_resolution'] = leaf.xpath('entry[@title="Work Resolution"]')[0].get('value')
             device = dict()
             device['type'] = 'monitor'
-            device['verbose'] = feature['model']
+            try:
+                device['verbose'] = feature['model']
+            except KeyError:
+                device['verbose'] = leaf.get('title')
             device['feature'] = feature
             devices.append(device)
 

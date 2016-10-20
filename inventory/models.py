@@ -166,7 +166,7 @@ class Component(models.Model):
 
     purchase_date = models.DateField(blank=True, null=True)
     store = models.ForeignKey(Store, blank=True, null=True)
-    warranty = models.SmallIntegerField(blank=True, null=True) # TODO гарантиый талон как отсканированный файл
+    warranty = models.SmallIntegerField(blank=True, null=True, help_text='месяцев')
     serialnumber = models.CharField(max_length=128, blank=True, null=True, verbose_name='Serial')
     description = models.TextField(blank=True)
     price_uah = models.IntegerField(help_text='Стоимость в грн', blank=True, null=True)
