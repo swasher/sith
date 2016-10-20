@@ -25,6 +25,9 @@ class ComputerAdminInline(admin.StackedInline):
     verbose_name_plural = "Компьютеры"
 
     def get_queryset(self, request):
+        """
+        Эта функция ограничивает отображаемые инлайн-объекты. Только kind='PC'
+        """
         qs = super(ComputerAdminInline, self).get_queryset(request)
         return qs.filter(kind='PC')
 
@@ -57,6 +60,14 @@ class ContainerMPTTAdmin(MPTTModelAdmin):
 
     inlines = [ComputerAdminInline, ComponentAdminInline]
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        """
+        Контейнер 'Помещение' не может иметь родительского контейнера 'Компьютер'.
+        Удаляем из списка возможных родителей 'Компьютеры' на странице редактирования Помещений.
+        """
+        if db_field.name == 'parent':
+            kwargs["queryset"] = Container.objects.exclude(kind='PC')
+            return super(ContainerMPTTAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 class ComputerMPTTAdmin(admin.ModelAdmin):
     inlines = (ComponentAdminInline, )
@@ -73,6 +84,15 @@ class ComputerMPTTAdmin(admin.ModelAdmin):
         else: # obj is None, so this is an "add new" page
             kwargs['fields'] = ['name', 'notice', 'parent', 'speccy']
         return super(ComputerMPTTAdmin, self).get_form(request, obj, **kwargs)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        """
+        Контейнер 'Компьютер' не может иметь родительского еонтейнера 'Компьютера'.
+        Удаляем из списка возможных родителей 'Компьютеры' на странице редактирования компьютеров.
+        """
+        if db_field.name == 'parent':
+            kwargs["queryset"] = Container.objects.exclude(kind='PC')
+            return super(ComputerMPTTAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     def save_model(self, request, obj, form, change):
         if 'speccy' in form.changed_data and Component.objects.filter(container=obj.pk).exists():
