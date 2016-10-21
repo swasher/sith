@@ -2,11 +2,14 @@
 {% load i18n admin_urls %}
 {% load static %}
 
-{#POSSIBLY DEPRECATED#}
 {# Блок включает CSS для кастомизации отображения списка картинок на странице редактирования компонента.#}
 {% block extrastyle %}
 
-  {{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "inline_images_upload.css" %}" />
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static "inline_images_upload.css" %}" />
+  <link href="//cdn.rawgit.com/noelboss/featherlight/1.5.0/release/featherlight.min.css" type="text/css" rel="stylesheet" />
+  <script src="//code.jquery.com/jquery-latest.js"></script>
+  <script src="//cdn.rawgit.com/noelboss/featherlight/1.5.0/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
 
 {% endblock %}
 

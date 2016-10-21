@@ -9,7 +9,7 @@
       padding-right: 10px;
       text-align-all: right;
       background-color: #00b3ee;
-      background: url(../img/icon-changelink.svg) 0 1px no-repeat;
+      background: url("{% static 'admin/img/icon-changelink.svg' %}") 0 1px no-repeat;
   }
   .changing {
       display: inline-block;
@@ -98,7 +98,8 @@
             {{ inline_admin_form.form.non_field_errors }}
         {% endif %}
 
-{#     comment by swasher: remove field list for each computer's component; leave only name in head#}
+        {# Это блок, отображающий поля модели для объектов в инлайне. Они скрываются при помощи css, #}
+        {# но должны присутствовать на странице, иначе не работает Save - пишет "исправьте ошибки", так как поля Name пустое как-бы #}
         {% for fieldset in inline_admin_form %}
         {% include "admin/includes/fieldset.html" %}
         {% endfor %}

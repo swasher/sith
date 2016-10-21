@@ -136,7 +136,6 @@ Used in class ImagesAdminInline(admin.TabularInline) in admin.py
 <script type="text/javascript">
 
 (function($) {
-  console.log('{{ inline_admin_formset.formset.prefix|escapejs }}');
   $("#{{ inline_admin_formset.formset.prefix|escapejs }}-group .tabular.inline-related tbody").tabularFormset({
     prefix: "{{ inline_admin_formset.formset.prefix|escapejs }}",
     addText: "{% filter escapejs %}{% blocktrans with inline_admin_formset.opts.verbose_name|capfirst as verbose_name %}Add another {{ verbose_name }}{% endblocktrans %}{% endfilter %}",

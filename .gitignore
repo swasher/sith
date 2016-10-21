@@ -1,7 +1,5 @@
 # Приватные файлы
 usefull_info.md
-/sith/secrets.py
-/notebook.md
 /test
 vault_password
 
@@ -17,7 +15,6 @@ __pycache__/
 test/*
 static/**
 bower_components
-/inventory/templates/admin/inventory/component/edit_inline/stacked_orig.html
 /media
 /collect_static
 
