@@ -96,8 +96,8 @@ class ComputerMPTTAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         if 'speccy' in form.changed_data and Component.objects.filter(container=obj.pk).exists():
-            messages.add_message(request, messages.INFO, 'Невозможно объеденить компоненты с уже имеющимися.'
-                                                         'Загрузите speccy в чистый компьютер')
+            messages.add_message(request, messages.WARNING, 'Невозможно объеденить компоненты с уже имеющимися.'
+                                                         'Загрузите speccy файл в новый компьютер')
             obj.speccy = None
         super(ComputerMPTTAdmin, self).save_model(request, obj, form, change)
 

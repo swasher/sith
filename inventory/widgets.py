@@ -37,7 +37,7 @@ class AdminCloudinaryWidget(AdminFileWidget):
             cloudinary_link = '<a href="{}{}" target="_blank">Cloudinary Link</a>'.format(cloudinary_prefix, value.public_id)                      # html TAG 'a' with text link
 
             output.append('<div>{}</div>'.format(caption))
-            output.append('<a href="{}" data-featherlight="image">{}</a>'.format(picture_full, picture_preview))
+            output.append('<a href="{}" data-featherlight="image" class="featherlight-loading">{}</a>'.format(picture_full, picture_preview))
             output.append('<div>{}</div>'.format(cloudinary_link))
 
         output.append(super(AdminFileWidget, self).render(name, value, attrs))
