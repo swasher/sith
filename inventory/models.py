@@ -178,9 +178,12 @@ class Component(models.Model):
     data = hstore.DictionaryField(blank=True)  # can pass attributes like null, blank, etc.
 
     def load_properties(self):
+        """
+        Загрузка полей hsore для выбранного компонента. Т.е. для монитора загрузятся 'диагональ', 'тип экрана' и.д.
+        """
         properties  = Property.objects.filter(sparetype__pk=self.sparetype_id)
 
-        data = dict()
+        data = self.data
         for prop in properties:
             data[prop.name] = ''
         self.data=data
