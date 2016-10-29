@@ -91,9 +91,14 @@ class Computer(Container):
                 c = Component()
                 c.name = device['verbose']
                 c.container = self
-                debug_var = device['type']
                 c.sparetype = SpareType.objects.get(name=device['type'])
                 c.data = device['feature']
+
+                manufactures = Manufacture.objects.all()
+                for manufacture in manufactures:
+                    if manufacture.name.lower() in c.name.lower():
+                        c.manufacture = manufacture
+
                 c.save()
         else:
             self.kind = 'PC'
