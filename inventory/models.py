@@ -185,13 +185,13 @@ class Component(models.Model):
 
         data = self.data
         for prop in properties:
-            data[prop.name] = ''
+            if prop.name not in data:
+                data[prop.name] = ''
         self.data=data
         self.save()
 
     def load_cpu_data(self):
-        # При загрузке данных о CPU из интернета страые поля сохраняются, но
-        # только те, которые были не с пустым значением.
+        # При загрузке данных о CPU сначала удалим поля с пустым значением
         if self.data:
             removed_empty_values = dict((k, v) for k, v in self.data.items() if v)
             self.data = removed_empty_values
