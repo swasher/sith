@@ -29,8 +29,8 @@ class AdminCloudinaryWidget(AdminFileWidget):
 
             try:
                 alt = cloudinary.api.resource(value.public_id)['context']['custom']['alt']
-            except cloudinary.api.NotFound:
-                alt = ''
+            except (cloudinary.api.NotFound, KeyError):
+                alt = "Image does't exist"
 
             picture_preview = cloudinary.CloudinaryImage(value.public_id).image(format='JPG', width = 150, height = 150, crop = 'fill', alt = alt) # html TAG 'a' with a small pict
             picture_full = cloudinary.CloudinaryImage(value.public_id).build_url()                                                                 # http link to full pict
