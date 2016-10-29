@@ -111,9 +111,9 @@ def parse_speccy(speccy_xml):
     feature['manufacturer'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Manufacturer"]')[0].get('value')
     # Далее, нет способа определить, интегрированное видео или дискретное. Предположу, что Intel не делает дискретных
     # видух (пруф https://linustechtips.com/main/topic/380568-has-intel-ever-made-a-dedicated-graphics-card/),
-    # а интегрированные бывают только интел. Поэтому, если manufacturer == intel, то считаем, что видео интегрированное
+    # а интегрированные бывают только 'Intel' или 'ATI'. Если так, то считаем, что видео интегрированное:
 
-    if feature['manufacturer'] == 'Intel':
+    if feature['manufacturer'] == 'Intel' or 'ATI':
         pass
     else:
         feature['model'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Model"]')[0].get('value')
