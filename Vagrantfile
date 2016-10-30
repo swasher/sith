@@ -1,6 +1,10 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+# What need to setting up when recreate environment:
+# internal_ip and project_name just below
+# project_name in provision\group_vars\all.yml, MUST match Vagrant's project_name
+
 internal_ip = "172.28.128.10"
 project_name = "sith"
 
@@ -8,11 +12,12 @@ Vagrant.configure(2) do |config|
 
   config.vm.box = "ubuntu/wily64"
   config.vm.network "private_network", ip: internal_ip
-  config.vm.hostname = "sith"
+  config.vm.hostname = project_name
 
   config.vm.provider :virtualbox do |v|
     v.memory = 1024
     v.gui = false
+    v.name = project_name
   end
 
   # for supress "stdin: is not a tty error"
@@ -46,8 +51,8 @@ Vagrant.configure(2) do |config|
     ansible.install        = true
     ansible.install_mode   = 'pip'
     ansible.limit          = 'development'
-    ansible.provisioning_path = "/home/vagrant/sith/provision"
-    ansible.inventory_path = "/home/vagrant/sith/provision/inventories"
+    ansible.provisioning_path = "/home/vagrant/" + project_name + "/provision"
+    ansible.inventory_path = "/home/vagrant/" + project_name + "/provision/inventories"
   end
 
 end

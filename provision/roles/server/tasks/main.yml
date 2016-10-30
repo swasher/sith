@@ -31,15 +31,15 @@
 
 - name: Set cloudinary cloud name
   lineinfile: dest=/etc/environment
-              line='COUDINARY_CLOUD_NAME={{coudinary_cloud_name}}'
+              line='COUDINARY_CLOUD_NAME={{cloudinary_cloud_name}}'
   become: yes
 
-- name: Set cloudinary cloud name
+- name: Set cloudinary api key
   lineinfile: dest=/etc/environment
               line='CLOUDINARY_API_KEY={{cloudinary_api_key}}'
   become: yes
 
-- name: Set cloudinary cloud name
+- name: Set cloudinary api secret
   lineinfile: dest=/etc/environment
               line='CLOUDINARY_API_SECRET={{cloudinary_api_secret}}'
   become: yes
