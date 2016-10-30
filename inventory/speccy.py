@@ -1,6 +1,7 @@
 from lxml import etree
 import re
 from .utils import capacity_to_human
+from .utils import bytes_to_human
 
 def parse_speccy(speccy_xml):
 
@@ -10,6 +11,9 @@ def parse_speccy(speccy_xml):
     #tree = etree.parse('sanya.xml')
     tree = etree.XML(speccy_xml)
 
+    #
+    # Summary
+    #
     summary = dict()
     summary['user'] = tree.xpath('/speccydata/mainsection[@title="Network"]/section[@title="Computer Name"]/entry[@title="NetBIOS Name"]')[0].get('value')
     summary['os'] = tree.xpath('/speccydata/mainsection[@title="Summary"]/section[@title="Operating System"]/entry')[0].get('title')
@@ -21,61 +25,77 @@ def parse_speccy(speccy_xml):
     summary['installation_date'] = tree.xpath('/speccydata/mainsection[@title="Operating System"]/entry[contains(@value, "Installation Date")]')[0].get('value')
     # summary['ram_used_slots'] = tree.xpath('/speccydata/mainsection[@title="RAM"]/section[@title="Memory slots"]/entry[@title="Used memory slots"]')[0].get('value')
 
-
+    #
+    # CPU
+    #
     processors_branch = tree.iterfind('.//mainsection[@title="CPU"]/section')
     for leaf in processors_branch:
         feature = dict()
-        feature['name'] = leaf.xpath('entry[@title="Name"]')[0].get('value')
-        feature['cores'] = leaf.xpath('entry[@title="Cores"]')[0].get('value')
-        feature['codename'] = leaf.xpath('entry[@title="Code Name"]')[0].get('value')
-        feature['package'] = leaf.xpath('entry[@title="Package"]')[0].get('value')
-        feature['technology'] = leaf.xpath('entry[@title="Technology"]')[0].get('value')
-        feature['stock_core_speed'] = leaf.xpath('entry[@title="Stock Core Speed"]')[0].get('value')
-        feature['socket'] = ''  # TODO Must return socket; must eligible with Motherboard socket; must searchable; look reference `CPU socket`
+        feature['Процессор'] = leaf.xpath('entry[@title="Name"]')[0].get('value')
+        feature['Кол-во ядер'] = leaf.xpath('entry[@title="Cores"]')[0].get('value')
+        feature['Кол-во потоков'] = leaf.xpath('entry[@title="Threads"]')[0].get('value')
+        feature['Архитектура'] = leaf.xpath('entry[@title="Code Name"]')[0].get('value')
+        feature['Сокет'] = leaf.xpath('entry[@title="Package"]')[0].get('value')
+        feature['Литография'] = leaf.xpath('entry[@title="Technology"]')[0].get('value')
+        feature['Базовая тактовая частота'] = leaf.xpath('entry[@title="Stock Core Speed"]')[0].get('value')
+        #feature['socket'] = ''  # TODO Must return socket; must eligible with Motherboard socket; must searchable; look reference `CPU socket`
 
         device = dict()
         device['type'] = 'cpu'
-        device['verbose'] = feature['name']
+        device['verbose'] = feature['Процессор']
         device['feature'] = feature
         devices.append(device)
 
-
+    #
+    # Motherboard
+    #
     feature = dict()
-    feature['manufacturer'] = tree.xpath('/speccydata/mainsection[@title="Motherboard"]/entry[@title="Manufacturer"]')[0].get('value')
-    feature['model'] = tree.xpath('/speccydata/mainsection[@title="Motherboard"]/entry[@title="Model"]')[0].get('value')
-    feature['chipset_vendor'] = tree.xpath('/speccydata/mainsection[@title="Motherboard"]/entry[@title="Chipset Vendor"]')[0].get('value')
-    feature['chipset_model'] = tree.xpath('/speccydata/mainsection[@title="Motherboard"]/entry[@title="Chipset Model"]')[0].get('value')
-    feature['ram_type'] = tree.xpath('/speccydata/mainsection[@title="RAM"]/section[@title="Memory"]/entry[@title="Type"]')[0].get('value')
-    feature['ram_slots'] = tree.xpath('/speccydata/mainsection[@title="RAM"]/section[@title="Memory slots"]/entry[@title="Total memory slots"]')[0].get('value')
-    feature['socket'] = '' # TODO Must return socket; must eligible with cpu socket; must searchable; look reference `CPU socket`
+    feature['Бренд'] = tree.xpath('/speccydata/mainsection[@title="Motherboard"]/entry[@title="Manufacturer"]')[0].get('value')
+    feature['Модель'] = tree.xpath('/speccydata/mainsection[@title="Motherboard"]/entry[@title="Model"]')[0].get('value')
+    feature['Чипсет, вендор'] = tree.xpath('/speccydata/mainsection[@title="Motherboard"]/entry[@title="Chipset Vendor"]')[0].get('value')
+    feature['Чипсет, модель'] = tree.xpath('/speccydata/mainsection[@title="Motherboard"]/entry[@title="Chipset Model"]')[0].get('value')
+    feature['Память, тип'] = tree.xpath('/speccydata/mainsection[@title="RAM"]/section[@title="Memory"]/entry[@title="Type"]')[0].get('value')
+    feature['Память, кол-во слотов'] = tree.xpath('/speccydata/mainsection[@title="RAM"]/section[@title="Memory slots"]/entry[@title="Total memory slots"]')[0].get('value')
+    feature['Биос, вендор'] = tree.xpath('/speccydata/mainsection[@title="RAM"]/section[@title="Memory slots"]/entry[@title="Total memory slots"]')[0].get('value')
+    feature['Биос, дата'] = tree.xpath('/speccydata/mainsection[@title="RAM"]/section[@title="Memory slots"]/entry[@title="Total memory slots"]')[0].get('value')
 
     device = dict()
     device['type'] = 'motherboard'
-    device['verbose'] = ' '.join([feature['manufacturer'], feature['model']])
+    device['verbose'] = ' '.join([feature['Бренд'], feature['Модель']])
     device['feature'] = feature
     devices.append(device)
 
-
+    #
+    # Memory
+    #
     memory_slots_branch = tree.iterfind('.//section[@title="SPD"]/section')
     for leaf in memory_slots_branch:  # поиск элементов
         feature = dict()
-        feature['slot'] = leaf.get('title')
-        feature['type'] = leaf.xpath('entry[@title="Type"]')[0].get('value')
-        feature['size'] = leaf.xpath('entry[@title="Size"]')[0].get('value')
-        feature['manufacturer'] = leaf.xpath('entry[@title="Manufacturer"]')[0].get('value')
+        feature['Слот'] = leaf.get('title')
+        feature['Тип модуля'] = leaf.xpath('entry[@title="Type"]')[0].get('value')
+        feature['Объем'] = leaf.xpath('entry[@title="Size"]')[0].get('value')
+        feature['Вендор'] = leaf.xpath('entry[@title="Manufacturer"]')[0].get('value')
+        feature['Частота'] = leaf.xpath('entry[@title="Max Bandwidth"]')[0].get('value')
+        feature['Серия (Part Number)'] = leaf.xpath('entry[@title="Part Number"]')[0].get('value')
         try:
-            feature['Week-year'] = leaf.xpath('entry[@title="Week/year"]')[0].get('value')
+            feature['Серийный номер'] = leaf.xpath('entry[@title="Serial Number"]')[0].get('value')
+        except IndexError:
+            pass
+        try:
+            feature['Изготовлено (Week-year)'] = leaf.xpath('entry[@title="Week/year"]')[0].get('value')
         except:
-            feature['Week-year'] = ''
+            pass
 
         device = dict()
         device['type'] = 'memory'
-        device['verbose'] = ' '.join([feature['manufacturer'], feature['size']])
+        device['verbose'] = ' '.join([feature['Вендор'], feature['Объем']])
         device['feature'] = feature
         devices.append(device)
 
 
-
+    #
+    # Monitor
+    #
     monitor_branch = tree.iterfind('.//mainsection[@title="Graphics"]/section')
     for leaf in monitor_branch:  # поиск элементов
 
@@ -87,9 +107,9 @@ def parse_speccy(speccy_xml):
             model_on_videocard = leaf.xpath('entry[@title="Name"]')[0].get('value')
             model_match = re.match(r'(.*)\son\s', model_on_videocard)
             try:
-                feature['model'] = model_match.group(1)
+                feature['Модель'] = model_match.group(1)
             except AttributeError: pass
-            feature['native_resolution'] = leaf.xpath('entry[@title="Work Resolution"]')[0].get('value')
+            feature['Нативное разрешение'] = leaf.xpath('entry[@title="Work Resolution"]')[0].get('value')
             device = dict()
             device['type'] = 'monitor'
             try:
@@ -100,8 +120,9 @@ def parse_speccy(speccy_xml):
             devices.append(device)
 
 
-
-
+    #
+    # Videocard
+    #
     feature = dict()
     # Тут небольшой быдло-код. Эта секция называется в Speccy по имени видеокарты, например, <section title="ATI Radeon HD 4600 Series">
     # И я не знаю, как сделать на нее селект.
@@ -109,84 +130,105 @@ def parse_speccy(speccy_xml):
     # отсутствуют в секции с монитором.
     # TODO еще больше проблем будет, когда надо будет делтаь массив видео карт для много-видеокартных систем
     #                                                                                ↓↓↓↓↓↓↓
-    feature['manufacturer'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Manufacturer"]')[0].get('value')
+    feature['Чипсет, вендор'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Manufacturer"]')[0].get('value')
     # Далее, нет способа определить, интегрированное видео или дискретное. Предположу, что Intel не делает дискретных
     # видух (пруф https://linustechtips.com/main/topic/380568-has-intel-ever-made-a-dedicated-graphics-card/),
     # а интегрированные бывают только 'Intel' или 'ATI'. Если так, то считаем, что видео интегрированное:
+    # ==================== ШО ЗА БРЕД?! ATI МОЖЕТ БЫТЬ И ДИСКРЕТНАЯ
 
-    if feature['manufacturer'] == 'Intel' or 'ATI':
+    if feature['Чипсет, вендор'] in ['Intel', 'ATI']:
         pass
     else:
-        feature['model'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Model"]')[0].get('value')
-        try:
-            feature['memory'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Memory"]')[0].get('value')
-        except:
-            feature['memory'] = ''
-        try:
-            feature['memory'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Physical Memory"]')[0].get('value')
-        except:
-            feature['memory'] = ''
+        feature['Модель'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Model"]')[0].get('value')
+        feature['Бренд'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Subvendor"]')[0].get('value')
 
-        feature['gpu'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="GPU"]')[0].get('value')
-        feature['subvendor'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Subvendor"]')[0].get('value')
-        feature['technology'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Technology"]')[0].get('value')
-        feature['release_date'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Release Date"]')[0].get('value')
+        try:
+            feature['Дата выпуска'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Release Date"]')[0].get('value')
+        except IndexError: pass
+
+        try:
+            feature['Объем памяти'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Memory"]')[0].get('value')
+        except:
+            feature['Объем памяти'] = ''
+        try:
+            feature['Объем памяти'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Physical Memory"]')[0].get('value')
+        except:
+            feature['Объем памяти'] = ''
+
+        try:
+            feature['GPU'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="GPU"]')[0].get('value')
+        except IndexError: pass
+
+        try:
+            feature['Литография'] = tree.xpath('/speccydata/mainsection[@title="Graphics"]/section/entry[@title="Technology"]')[0].get('value')
+        except IndexError: pass
 
         device = dict()
         device['type'] = 'videocard'
-        device['verbose'] = ' '.join([feature['manufacturer'], feature['model']])
+        device['verbose'] = ' '.join([feature['Чипсет, вендор'], feature['Модель']])
         device['feature'] = feature
         devices.append(device)
 
-
+    #
+    # HDD
+    #
     disks_branch = tree.iterfind('.//section[@title="Hard drives"]/section')
     for leaf in disks_branch:
         feature = dict()
 
         feature['title'] = leaf.get('title')
         try:
-            feature['manufacturer'] = leaf.xpath('entry[@title="Manufacturer"]')[0].get('value')
-        except:
-            feature['manufacturer'] = ''
+            feature['Бренд'] = leaf.xpath('entry[@title="Manufacturer"]')[0].get('value')
+        except (KeyError, IndexError):
+            feature['Бренд'] = ''
 
         try:
             speed = leaf.xpath('entry[@title="Speed"]')[0].get('value')
         except:
-            feature['medium'] = 'hdd'
+            feature['Тип носителя'] = 'HDD'
         else:
             if 'SSD' in speed:
-                feature['medium'] = 'ssd'
+                feature['Тип носителя'] = 'SSD'
             else:
-                feature['medium'] = 'hdd'
-                feature['speed'] = speed
+                feature['Тип носителя'] = 'HDD'
+                feature['Скорость'] = speed
 
         capacity = leaf.xpath('entry[@title="Capacity"]')[0].get('value')
-        feature['capacity'] = capacity
-        feature['human_capacity'] = capacity_to_human(capacity)
-        feature['serial_number'] = leaf.xpath('entry[@title="Serial Number"]')[0].get('value')
-        feature['interface'] = leaf.xpath('entry[@title="Interface"]')[0].get('value')
-        feature['sata_type'] = leaf.xpath('entry[@title="SATA type"]')[0].get('value')
+        feature['Емкость'] = capacity
+
+        feature['Серийный номер'] = leaf.xpath('entry[@title="Serial Number"]')[0].get('value')
+        feature['Интерфейс'] = leaf.xpath('entry[@title="Interface"]')[0].get('value')
+        feature['Тип SATA'] = leaf.xpath('entry[@title="SATA type"]')[0].get('value')
         real_size = leaf.xpath('entry[@title="Real size"]')[0].get('value') #.replace(" ", "")
+
         # convert real_size to list, then filter only digets, then join and int them
-        feature['real_size'] = int(''.join(filter(lambda x: x.isdigit(), list(real_size))))
+        capacity_in_bytes = int(''.join(filter(lambda x: x.isdigit(), list(real_size))))
+        feature['Емкость SI'] = bytes_to_human(capacity_in_bytes)
+        # OR you can use feature['Емкость human readable'] = capacity_to_human(capacity)
 
         device = dict()
         device['type'] = 'storage'
-        device['verbose'] = ' '.join([feature['manufacturer'], feature['capacity'], feature['medium']])
+        device['verbose'] = ' '.join([feature['Бренд'], feature['Емкость SI'], feature['Тип носителя']])
         device['feature'] = feature
         devices.append(device)
 
-
+    #
+    # CDROM
+    #
     # Непонятно, как отличать виртуальные cdrom от реальных
     cdroms_branch = tree.iterfind('.//mainsection[@title="Optical Drives"]/section')
     for leaf in cdroms_branch:  # поиск элементов
         feature = dict()
-        feature['title'] =leaf.get('title')
-        feature['name'] = leaf.xpath('entry[@title="Name"]')[0].get('value')
-        feature['media'] = leaf.xpath('entry[@title="Media Type"]')[0].get('value')
+        feature['Модель'] =leaf.get('title')
+        if 'virtual' or 'clonedrive' in feature['Модель'].lower():
+            continue
+        #feature['name'] = leaf.xpath('entry[@title="Name"]')[0].get('value')
+        feature['Тип првода'] = leaf.xpath('entry[@title="Media Type"]')[0].get('value')
+        feature['Возможности чтения'] = leaf.xpath('entry[@title="Read capabilities"]')[0].get('value')
+        feature['Возможности записи'] = leaf.xpath('entry[@title="Write capabilities"]')[0].get('value')
         device = dict()
         device['type'] = 'cdrom'
-        device['verbose'] = feature['title']# + feature['name']
+        device['verbose'] = feature['Модель']# + feature['name']
         device['feature'] = feature
         devices.append(device)
 
@@ -197,7 +239,7 @@ def parse_speccy(speccy_xml):
     # перефирия
     # - может, и вовсе не надо
 
-    # сеть - то же самое, как отделить встроенную от внешней
+    # сеть - то же самое, как отделить встроенную от внешней?..
     # network_card_name = tree.xpath('/speccydata/mainsection[@title="Network"]/section[@title="Adapters List"]/section/section')[0].get('title')
 
     return summary, devices

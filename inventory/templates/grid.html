@@ -114,10 +114,10 @@
 
             <thead>
               <tr>
-                <th>Storage</th>
-                <th>Brand</th>
-                <th>Model</th>
-                <th>Capacity</th>
+                <th>Накопитель</th>
+                <th>Бранд</th>
+                <th>Модель</th>
+                <th>Емкость</th>
                 <th>Container</th>
               </tr>
             <thead>
@@ -128,7 +128,7 @@
                 <td><a href="{% url 'admin:inventory_component_change' storage.pk %}">{{ storage.name }}</a></td>
                 <td>{{ storage.manufacture }}</td>
                 <td>{{ storage.model }}</td>
-                <td>{{ storage.data.capacity }}</td>
+                <td>{{ storage.data.Емкость }}</td>
                 <td>{{ storage.container.name }}</td>
               </tr>
             {% endfor %}

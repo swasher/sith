@@ -1,5 +1,5 @@
 import re
-
+import math
 
 def capacity_to_human(capacity):
 
@@ -19,3 +19,12 @@ def capacity_to_human(capacity):
         human =  ''
 
     return human
+
+def bytes_to_human(bytes):
+   if (bytes == 0):
+       return '0B'
+   size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+   i = int(math.floor(math.log(bytes, 1024)))
+   p = math.pow(1000, i)
+   s = round(bytes / p)
+   return '{} {}'.format(s,size_name[i])
