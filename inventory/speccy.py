@@ -32,12 +32,12 @@ def parse_speccy(speccy_xml):
     for leaf in processors_branch:
         feature = dict()
         feature['Процессор'] = leaf.xpath('entry[@title="Name"]')[0].get('value')
-        feature['Кол-во ядер'] = leaf.xpath('entry[@title="Cores"]')[0].get('value')
-        feature['Кол-во потоков'] = leaf.xpath('entry[@title="Threads"]')[0].get('value')
+        feature['Количество ядер'] = leaf.xpath('entry[@title="Cores"]')[0].get('value')
+        feature['Количество потоков'] = leaf.xpath('entry[@title="Threads"]')[0].get('value')
         feature['Архитектура'] = leaf.xpath('entry[@title="Code Name"]')[0].get('value')
         feature['Сокет'] = leaf.xpath('entry[@title="Package"]')[0].get('value')
         feature['Литография'] = leaf.xpath('entry[@title="Technology"]')[0].get('value')
-        feature['Базовая тактовая частота'] = leaf.xpath('entry[@title="Stock Core Speed"]')[0].get('value')
+        feature['Базовая тактовая частота процессора'] = leaf.xpath('entry[@title="Stock Core Speed"]')[0].get('value')
         #feature['socket'] = ''  # TODO Must return socket; must eligible with Motherboard socket; must searchable; look reference `CPU socket`
 
         device = dict()
@@ -56,8 +56,8 @@ def parse_speccy(speccy_xml):
     feature['Чипсет, модель'] = tree.xpath('/speccydata/mainsection[@title="Motherboard"]/entry[@title="Chipset Model"]')[0].get('value')
     feature['Память, тип'] = tree.xpath('/speccydata/mainsection[@title="RAM"]/section[@title="Memory"]/entry[@title="Type"]')[0].get('value')
     feature['Память, кол-во слотов'] = tree.xpath('/speccydata/mainsection[@title="RAM"]/section[@title="Memory slots"]/entry[@title="Total memory slots"]')[0].get('value')
-    feature['Биос, вендор'] = tree.xpath('/speccydata/mainsection[@title="RAM"]/section[@title="Memory slots"]/entry[@title="Total memory slots"]')[0].get('value')
-    feature['Биос, дата'] = tree.xpath('/speccydata/mainsection[@title="RAM"]/section[@title="Memory slots"]/entry[@title="Total memory slots"]')[0].get('value')
+    feature['Биос, вендор'] = tree.xpath('/speccydata/mainsection[@title="Motherboard"]/section[@title="BIOS"]/entry[@title="Brand"]')[0].get('value')
+    feature['Биос, дата'] = tree.xpath('/speccydata/mainsection[@title="Motherboard"]/section[@title="BIOS"]/entry[@title="Date"]')[0].get('value')
 
     device = dict()
     device['type'] = 'motherboard'
