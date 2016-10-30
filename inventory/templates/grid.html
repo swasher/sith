@@ -17,6 +17,7 @@
     <li role="presentation">                 <a href="#memory"   aria-controls="memory" role="tab" data-toggle="tab">Memory</a></li>
     <li role="presentation">                 <a href="#storage"  aria-controls="storage" role="tab" data-toggle="tab">Storage</a></li>
     <li role="presentation">                 <a href="#devices"  aria-controls="devices" role="tab" data-toggle="tab">Devices</a></li>
+    <li role="presentation">                 <a href="#todo"     aria-controls="todo" role="tab" data-toggle="tab">TODO</a></li>
   </ul>
 
 
@@ -153,6 +154,43 @@
 
           </table>
       </div>
+
+
+
+      <div role="tabpanel" class="tab-pane fade" id="todo">
+          <table class="table table-striped table-hover table-bordered" id="table-todo" width="100%">
+
+            <thead>
+              <tr>
+                <th>Device</th>
+                <th>Type</th>
+                <th>Container</th>
+                <th>TODO</th>
+              </tr>
+            <thead>
+
+            <tbody>
+            {% for do in todo %}
+              <tr>
+                {% if do.description %}
+                  <td><a href="{% url 'admin:inventory_component_change' do.pk %}">{{ do.name }}</a></td>
+                  <td>{{ do.sparetype }}</td>
+                  <td>{{ do.container.name }}</td>
+                  <td>{{ do.description }}</td>
+                {% else %}
+                  <td><a href="{% url 'admin:inventory_computer_change' do.pk %}">{{ do.name }}</a></td>
+                  <td>Компьютер</td>
+                  <td>{{ do.parent }}</td>
+                  <td>{{ do.notice }}</td>
+                {% endif %}
+              </tr>
+            {% endfor %}
+            </tbody>
+
+          </table>
+      </div>
+
+
 
   </div>
 </div>

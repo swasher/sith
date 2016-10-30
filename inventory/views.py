@@ -23,4 +23,18 @@ def grid(request):
     q = q.exclude(sparetype__name='motherboard')
     devices = q
 
-    return render_to_response('grid.html', {'computers': computers, 'processors': processors, 'memory': memory, 'storages': storages, 'devices': devices}, context)
+    from itertools import chain
+    todo_computers = Computer.objects.filter(notice__icontains='TODO:')
+    todo_components = Component.objects.filter(description__icontains='TODO:')
+    todo_items = chain(todo_computers, todo_components)
+
+    # TODO все выводится, но неправильно формируется линк на Компьюетер - он формируется как на Компонент
+
+    return render_to_response('grid.html', {'computers': computers,
+                                            'processors': processors,
+                                            'memory': memory,
+                                            'storages': storages,
+                                            'devices': devices,
+                                            'todo': todo_items,
+                                            },
+                              context)
