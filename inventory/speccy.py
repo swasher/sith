@@ -176,7 +176,7 @@ def parse_speccy(speccy_xml):
     for leaf in disks_branch:
         feature = dict()
 
-        feature['title'] = leaf.get('title')
+        feature['Модель'] = leaf.get('title')
         try:
             feature['Бренд'] = leaf.xpath('entry[@title="Manufacturer"]')[0].get('value')
         except (KeyError, IndexError):

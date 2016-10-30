@@ -125,6 +125,16 @@ class ImagesAdminInline(admin.StackedInline):
 
 class ComponentAdmin(admin.ModelAdmin):
 
+    parent_fk = None
+
+    def delete_view(self, request, object_id, extra_context=None):
+        self.parent_fk = Component.objects.get(pk=object_id).container_id
+        return super(ComponentAdmin, self).delete_view(request, object_id, extra_context)
+
+    def response_delete(self, request, obj_display, obj_id):
+        url = reverse('admin:inventory_computer_change', args=(self.parent_fk,))
+        return HttpResponseRedirect(url)
+
     def response_change(self, request, obj):
         """
         Эта функция выполняется при нажатии на  кнопку LOAD PROPERTIES в форме редактирования комплектующего.
