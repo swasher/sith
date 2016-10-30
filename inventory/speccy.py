@@ -1,5 +1,6 @@
 from lxml import etree
 import re
+from .utils import capacity_to_human
 
 def parse_speccy(speccy_xml):
 
@@ -159,7 +160,9 @@ def parse_speccy(speccy_xml):
                 feature['medium'] = 'hdd'
                 feature['speed'] = speed
 
-        feature['capacity'] = leaf.xpath('entry[@title="Capacity"]')[0].get('value')
+        capacity = leaf.xpath('entry[@title="Capacity"]')[0].get('value')
+        feature['capacity'] = capacity
+        feature['human_capacity'] = capacity_to_human(capacity)
         feature['serial_number'] = leaf.xpath('entry[@title="Serial Number"]')[0].get('value')
         feature['interface'] = leaf.xpath('entry[@title="Interface"]')[0].get('value')
         feature['sata_type'] = leaf.xpath('entry[@title="SATA type"]')[0].get('value')

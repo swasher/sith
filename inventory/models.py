@@ -94,6 +94,9 @@ class Computer(Container):
                 c.sparetype = SpareType.objects.get(name=device['type'])
                 c.data = device['feature']
 
+                if 'serial_number' in device:
+                    c.serialnumber = device['serial_number']
+
                 manufactures = Manufacture.objects.all()
                 for manufacture in manufactures:
                     if manufacture.name.lower() in c.name.lower():

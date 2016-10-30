@@ -80,14 +80,14 @@ class ComputerMPTTAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         # Proper kwargs are form, fields, exclude, formfield_callback
         if obj: # obj is not None, so this is a "change already exist" page
-            kwargs['exclude'] = ['kind']
+            kwargs['exclude'] = ['kind', 'speccy']
         else: # obj is None, so this is an "add new" page
             kwargs['fields'] = ['name', 'notice', 'parent', 'speccy']
         return super(ComputerMPTTAdmin, self).get_form(request, obj, **kwargs)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         """
-        Контейнер 'Компьютер' не может иметь родительского еонтейнера 'Компьютера'.
+        Контейнер 'Компьютер' не может иметь родительским контейнером 'Компьютер'.
         Удаляем из списка возможных родителей 'Компьютеры' на странице редактирования компьютеров.
         """
         if db_field.name == 'parent':
