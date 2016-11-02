@@ -128,10 +128,16 @@ class ComponentAdmin(admin.ModelAdmin):
     parent_fk = None
 
     def delete_view(self, request, object_id, extra_context=None):
+        """ См. response_delete
+        """
         self.parent_fk = Component.objects.get(pk=object_id).container_id
         return super(ComponentAdmin, self).delete_view(request, object_id, extra_context)
 
     def response_delete(self, request, obj_display, obj_id):
+        """ После удаление Компонента производит редирект к родительскому Компьютеру, вместо общего списка Компонентов.
+        Для определения родительского Компьютера (ведь в этот момент дочернего Компонента уже не существует),
+        служит функция delete_view (см. выше)
+        """
         url = reverse('admin:inventory_computer_change', args=(self.parent_fk,))
         return HttpResponseRedirect(url)
 
@@ -172,8 +178,8 @@ class ComponentAdmin(admin.ModelAdmin):
     #link_to_parent_computer.short_description = "Link to parent computer"
 
     list_display=['name', 'sparetype', 'container']  # это поля в виде списка
-    fields = ['link_to_parent_computer', 'name', 'container', 'sparetype', 'manufacture', 'model', 'purchase_date',
-              'store', 'warranty', 'serialnumber', 'description', 'price_uah', 'price_usd', 'iscash', 'invoice',
+    fields = ['link_to_parent_computer', 'name', 'container', 'sparetype', 'manufacture', 'model', 'store',
+              'purchase_date', 'warranty', 'serialnumber', 'description', 'price_uah', 'price_usd', 'iscash', 'invoice',
               'product_page', 'data'] # это поля для формы редактирования. Перечисление всех полей необходимо для того,
                                       # чтобы поле link_to_parent_computer было в начале списка.
 

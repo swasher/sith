@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -38,3 +39,35 @@ def grid(request):
                                             'todo': todo_items,
                                             },
                               context)
+
+@login_required()
+def rename(request):
+    context = RequestContext(request)
+    errors = []
+    debug = []
+    form = {}
+
+    if request.POST:
+
+        form['old_key'] = request.POST.get('old_key')
+        form['new_key'] = request.POST.get('new_key')
+
+        if not form['old_key']:
+            errors.append('Заполните old_key')
+        if not form['new_key']:
+            errors.append('Заполните new_key')
+        if not errors:
+            old_key = form['old_key']
+            new_key = form['new_key']
+
+            components = Component.objects.all()
+
+            for component in components:
+                if old_key in component.data:
+                    component.data[new_key] = component.data.pop(old_key)
+                    debug.append(component.name)
+                    component.save()
+
+            return HttpResponse('{} -> {}: Renaming OK! Data: {}'.format(old_key, new_key, debug))
+
+    return render_to_response('rename.html', {'errors': errors, 'form':form}, context)

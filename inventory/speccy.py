@@ -37,6 +37,7 @@ def parse_speccy(speccy_xml):
         feature['Архитектура'] = leaf.xpath('entry[@title="Code Name"]')[0].get('value')
         feature['Сокет'] = leaf.xpath('entry[@title="Package"]')[0].get('value')
         feature['Литография'] = leaf.xpath('entry[@title="Technology"]')[0].get('value')
+        feature['Ревизия'] = leaf.xpath('entry[@title="Revision"]')[0].get('value')
         feature['Базовая тактовая частота процессора'] = leaf.xpath('entry[@title="Stock Core Speed"]')[0].get('value')
         #feature['socket'] = ''  # TODO Must return socket; must eligible with Motherboard socket; must searchable; look reference `CPU socket`
 
