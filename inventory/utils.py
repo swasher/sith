@@ -1,5 +1,7 @@
 import re
 import math
+import calendar
+import datetime
 
 def capacity_to_human(capacity):
 
@@ -28,3 +30,11 @@ def bytes_to_human(bytes):
    p = math.pow(1000, i)
    s = round(bytes / p)
    return '{} {}'.format(s,size_name[i])
+
+
+def add_months(sourcedate, months):
+    month = sourcedate.month - 1 + months
+    year = int(sourcedate.year + month / 12 )
+    month = month % 12 + 1
+    day = min(sourcedate.day, calendar.monthrange(year,month)[1])
+    return datetime.date(year, month, day)

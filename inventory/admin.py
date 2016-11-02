@@ -12,7 +12,7 @@ from inventory.models import Property
 from inventory.models import Manufacture
 from inventory.models import Image
 from .forms import ImageForm
-
+from .utils import add_months
 
 class ComputerAdminInline(admin.StackedInline):
     model = Container
@@ -167,6 +167,17 @@ class ComponentAdmin(admin.ModelAdmin):
             return return_url(self)
         else:
             return super(ComponentAdmin, self).response_change(request, obj)
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(ComponentAdmin, self).get_form(request, obj, **kwargs)
+
+        buy_date = obj.purchase_date
+        month_of_warranty = obj.warranty
+
+        end_of_warranty = add_months(buy_date, month_of_warranty)
+
+        form.base_fields['warranty'].help_text = "End of warranty: {:%d %B %Y}".format(end_of_warranty)
+        return form
 
     def link_to_parent_computer(self, instance):
         from django.utils.html import format_html
