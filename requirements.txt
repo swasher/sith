@@ -2,6 +2,7 @@ Django==1.9.5
 PyYAML==3.11
 beautifulsoup4==4.5.1
 cloudinary==1.4.0
+git+https://github.com/Said007/currencylayer
 dj-database-url==0.4.1
 django-debug-toolbar==1.5
 django-hstore==1.4.2
