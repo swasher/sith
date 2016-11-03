@@ -178,10 +178,10 @@ class Component(models.Model):
     serialnumber = models.CharField(max_length=128, blank=True, null=True, verbose_name='Serial')
     description = models.TextField(blank=True)
     price_uah = models.DecimalField(max_digits=8, decimal_places=2, help_text='Стоимость в грн', blank=True, null=True)
-    #price_uah = models.IntegerField(help_text='Стоимость в грн', blank=True, null=True)
-    #price_usd = models.IntegerField(help_text='Ориентировачная стоимость в USD на момент покупки', blank=True, null=True)
+    # deprecated price_uah = models.IntegerField(help_text='Стоимость в грн', blank=True, null=True)
+    # deprecated price_usd = models.IntegerField(help_text='Ориентировачная стоимость в USD на момент покупки', blank=True, null=True)
     iscash = models.BooleanField(help_text='Оплачено наличными', default=False)
-    invoice = models.CharField(max_length=16, verbose_name='Номер счета', blank=True)
+    invoice = models.CharField(max_length=64, verbose_name='Номер счета', blank=True)
     product_page = models.URLField(blank=True, verbose_name='URL на страницу продукта')
 
     data = hstore.DictionaryField(blank=True)  # can pass attributes like null, blank, etc.
