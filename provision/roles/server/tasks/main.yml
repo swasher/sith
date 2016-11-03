@@ -58,3 +58,8 @@
   lineinfile: dest=/etc/environment
               line='DOMAIN=sith:8000'
   become: yes
+
+- name: Set server domain
+  lineinfile: dest=/etc/environment
+              line='CURRENCYLAYER_API_KEY=7d69134e4c553851398815b8a8b986fd'
+  become: yes

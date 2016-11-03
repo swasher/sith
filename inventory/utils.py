@@ -2,6 +2,8 @@ import re
 import math
 import calendar
 import datetime
+import currencylayer
+from django.conf import settings
 
 def capacity_to_human(capacity):
 
@@ -38,3 +40,16 @@ def add_months(sourcedate, months):
     month = month % 12 + 1
     day = min(sourcedate.day, calendar.monthrange(year,month)[1])
     return datetime.date(year, month, day)
+
+
+def uah_to_usd(uah, date):
+    CURRENCYLAYER_API_KEY = settings.CURRENCYLAYER_API_KEY
+    exchange_rate = currencylayer.Client(access_key=CURRENCYLAYER_API_KEY)
+    cur = exchange_rate.historical(date=date, base_currency='USD')
+
+    if cur['success']:
+        usd = round(uah / cur['quotes']['USDUAH'], 2)
+    else:
+        usd = None
+
+    return usd

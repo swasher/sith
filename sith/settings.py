@@ -41,6 +41,7 @@ PHANTOMJS = os.getenv('PHANTOMJS')
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 DOMAIN = os.getenv('DOMAIN')
+CURRENCYLAYER_API_KEY = os.getenv('CURRENCYLAYER_API_KEY')
 
 
 

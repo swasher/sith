@@ -13,6 +13,8 @@ from inventory.models import Manufacture
 from inventory.models import Image
 from .forms import ImageForm
 from .utils import add_months
+from .utils import uah_to_usd
+
 
 class ComputerAdminInline(admin.StackedInline):
     model = Container
@@ -171,12 +173,16 @@ class ComponentAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         form = super(ComponentAdmin, self).get_form(request, obj, **kwargs)
 
-        buy_date = obj.purchase_date
-        month_of_warranty = obj.warranty
+        if obj.purchase_date and obj.warranty:
+            buy_date = obj.purchase_date
+            month_of_warranty = obj.warranty
+            end_of_warranty = add_months(buy_date, month_of_warranty)
+            form.base_fields['warranty'].help_text = "End of warranty: {:%d %B %Y}".format(end_of_warranty)
 
-        end_of_warranty = add_months(buy_date, month_of_warranty)
+        if obj.purchase_date and obj.price_uah:
+            usd = uah_to_usd(obj.price_uah, obj.purchase_date)
+            form.base_fields['price_uah'].help_text = 'Это примерно ${} на {:%d.%b.%Y}'.format(usd, obj.purchase_date)
 
-        form.base_fields['warranty'].help_text = "End of warranty: {:%d %B %Y}".format(end_of_warranty)
         return form
 
     def link_to_parent_computer(self, instance):
@@ -190,7 +196,7 @@ class ComponentAdmin(admin.ModelAdmin):
 
     list_display=['name', 'sparetype', 'container']  # это поля в виде списка
     fields = ['link_to_parent_computer', 'name', 'container', 'sparetype', 'manufacture', 'model', 'store',
-              'purchase_date', 'warranty', 'serialnumber', 'description', 'price_uah', 'price_usd', 'iscash', 'invoice',
+              'purchase_date', 'warranty', 'serialnumber', 'description', 'price_uah', 'iscash', 'invoice',
               'product_page', 'data'] # это поля для формы редактирования. Перечисление всех полей необходимо для того,
                                       # чтобы поле link_to_parent_computer было в начале списка.
 
