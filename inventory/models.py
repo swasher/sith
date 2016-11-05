@@ -12,6 +12,7 @@ from cloudinary.models import CloudinaryField
 from cloudinary.uploader import destroy
 from .get_cpu_data import cpu_data
 from .speccy import parse_speccy
+from .utils import uah_to_usd
 
 
 DATATYPE_CHOICES = (
@@ -178,6 +179,7 @@ class Component(models.Model):
     serialnumber = models.CharField(max_length=128, blank=True, null=True, verbose_name='Serial')
     description = models.TextField(blank=True)
     price_uah = models.DecimalField(max_digits=8, decimal_places=2, help_text='Стоимость в грн', blank=True, null=True)
+    price_usd = models.DecimalField(max_digits=8, decimal_places=2, help_text='Это поле используется как help_text для поля price_uah на странице редактирования Компонента', blank=True, null=True)
     # deprecated price_uah = models.IntegerField(help_text='Стоимость в грн', blank=True, null=True)
     # deprecated price_usd = models.IntegerField(help_text='Ориентировачная стоимость в USD на момент покупки', blank=True, null=True)
     iscash = models.BooleanField(help_text='Оплачено наличными', default=False)
@@ -215,6 +217,19 @@ class Component(models.Model):
                 self.save()
         else:
             pass
+
+    def save(self, *args, **kwargs):
+
+        if self.price_uah and self.purchase_date:
+            orig = Component.objects.get(pk=self.pk)
+            price_is_changed = orig.price_uah != self.price_uah or orig.purchase_date != self.purchase_date
+
+            if price_is_changed or not self.price_usd:
+                usd = uah_to_usd(self.price_uah, self.purchase_date)
+                self.price_usd = usd
+
+        super(Component, self).save(*args, **kwargs) # Call the "real" save() method.
+
 
     class Meta:
         verbose_name = 'Комплектующие и устройства'

@@ -171,6 +171,10 @@ class ComponentAdmin(admin.ModelAdmin):
             return super(ComponentAdmin, self).response_change(request, obj)
 
     def get_form(self, request, obj=None, **kwargs):
+        """
+        Изменяет help_text у полей warranty и price_uah - показывает, когда закончится гарантия,
+        и сумму по курсу на день покупки в долларах (используется API currencylayer.com)
+        """
         form = super(ComponentAdmin, self).get_form(request, obj, **kwargs)
 
         if obj.purchase_date and obj.warranty:
@@ -179,9 +183,9 @@ class ComponentAdmin(admin.ModelAdmin):
             end_of_warranty = add_months(buy_date, month_of_warranty)
             form.base_fields['warranty'].help_text = "End of warranty: {:%d %B %Y}".format(end_of_warranty)
 
-        if obj.purchase_date and obj.price_uah:
-            usd = uah_to_usd(obj.price_uah, obj.purchase_date)
-            form.base_fields['price_uah'].help_text = 'Это примерно ${} на {:%d.%b.%Y}'.format(usd, obj.purchase_date)
+        if obj.price_usd:
+        #     usd = uah_to_usd(obj.price_uah, obj.purchase_date)
+            form.base_fields['price_uah'].help_text = 'Эквивалент ${} на {:%d.%b.%Y}'.format(obj.price_usd, obj.purchase_date)
 
         return form
 
