@@ -13,7 +13,6 @@ from inventory.models import Manufacture
 from inventory.models import Image
 from .forms import ImageForm
 from .utils import add_months
-from .utils import uah_to_usd
 
 
 class ComputerAdminInline(admin.StackedInline):
@@ -199,7 +198,7 @@ class ComponentAdmin(admin.ModelAdmin):
     #link_to_parent_computer.short_description = "Link to parent computer"
 
     list_display=['name', 'sparetype', 'container']  # это поля в виде списка
-    fields = ['link_to_parent_computer', 'name', 'container', 'sparetype', 'manufacture', 'model', 'store',
+    fields = ['link_to_parent_computer', 'name', 'container', 'sparetype', 'brand', 'model', 'manufacturing_date', 'store',
               'purchase_date', 'warranty', 'serialnumber', 'description', 'price_uah', 'iscash', 'invoice',
               'product_page', 'data'] # это поля для формы редактирования. Перечисление всех полей необходимо для того,
                                       # чтобы поле link_to_parent_computer было в начале списка.

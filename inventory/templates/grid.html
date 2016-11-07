@@ -124,7 +124,7 @@
             {% for storage in storages %}
               <tr>
                 <td><a href="{% url 'admin:inventory_component_change' storage.pk %}">{{ storage.name }}</a></td>
-                <td>{{ storage.manufacture }}</td>
+                <td>{{ storage.brand }}</td>
                 <td>{{ storage.model }}</td>
                 <td>{{ storage.data.Емкость }}</td>
                 <td>{{ storage.container.name }}</td>

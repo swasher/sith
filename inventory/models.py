@@ -101,7 +101,7 @@ class Computer(Container):
                 manufactures = Manufacture.objects.all()
                 for manufacture in manufactures:
                     if manufacture.name.lower() in c.name.lower():
-                        c.manufacture = manufacture
+                        c.brand = manufacture
 
                 c.save()
         else:
@@ -170,8 +170,9 @@ class Component(models.Model):
     container = TreeForeignKey(Container)
     sparetype = models.ForeignKey(SpareType)
 
-    manufacture = models.ForeignKey(Manufacture, blank=True, null=True)  # TODO сделать автокомплит
+    brand = models.ForeignKey(Manufacture, blank=True, null=True)
     model = models.CharField(max_length=100, blank=True, null=True)
+    manufacturing_date = models.CharField(max_length=20, blank=True, null=True, help_text='Format: APR 2010 or Q2 2012')
 
     purchase_date = models.DateField(blank=True, null=True)
     store = models.ForeignKey(Store, blank=True, null=True)

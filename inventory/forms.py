@@ -13,4 +13,3 @@ class ImageForm(forms.ModelForm):
         widgets = {
             'picture': AdminCloudinaryWidget(),
         }
-

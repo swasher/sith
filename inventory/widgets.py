@@ -6,8 +6,6 @@ import cloudinary
 
 class AdminCloudinaryWidget(AdminFileWidget):
 
-
-
     #template_with_initial = ('%(initial_text)s: <a href="%(initial_url)s">%(initial)s</a> %(clear_template)s<br />%(input_text)s: %(input)s')
     # override:
     template_with_initial = ''
@@ -54,11 +52,3 @@ class AdminCloudinaryWidget(AdminFileWidget):
 
         output.append(super(AdminFileWidget, self).render(name, value, attrs))
         return mark_safe(u''.join(output))
-
-
-    # picture_preview = cloudinary.CloudinaryImage(value.public_id).image(format='JPG', width = 150, height = 150, crop = 'fill', alt = "Sample Image")
-    # picture_full = cloudinary.CloudinaryImage(value.public_id).build_url()
-    # picture = '<a href={}  target="_blank" alt="{}">{}</a>'.format(picture_full, alt, picture_preview)
-    # cloudinary_link = '<a href="https://cloudinary.com/console/media_library#/dialog/image/upload/{}" target="_blank">Cloudinary Link</a>'.format(value.public_id)
-    #
-    # output.append('<div>{}</div> <div class="cloudinary-image">{}</div><div>{}</div>'.format(caption, picture, cloudinary_link))
