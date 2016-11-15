@@ -164,30 +164,38 @@ class Manufacture(models.Model):
         return self.name
 
 
+class Country(models.Model):
+    country = models.CharField(max_length=64)
+
+    def __str__(self):
+        return self.country
+
+
 class Component(models.Model):
 
-    name = models.CharField(max_length=64)
-    container = TreeForeignKey(Container)
-    sparetype = models.ForeignKey(SpareType)
+    name = models.CharField(max_length=64, verbose_name='Наименование')
+    container = TreeForeignKey(Container, verbose_name='Владелец')
+    sparetype = models.ForeignKey(SpareType, verbose_name='Тип изделия')
 
-    brand = models.ForeignKey(Manufacture, blank=True, null=True)
-    model = models.CharField(max_length=100, blank=True, null=True)
-    manufacturing_date = models.CharField(max_length=20, blank=True, null=True, help_text='Format: APR 2010 or Q2 2012')
+    brand = models.ForeignKey(Manufacture, blank=True, null=True, verbose_name='Бренд')
+    model = models.CharField(max_length=100, blank=True, null=True, verbose_name='Модель')
+    manufacturing_date = models.CharField(max_length=20, blank=True, null=True, help_text='Format: APR 2010 or Q2 2012', verbose_name='Дата производства')
+    assembled = models.ForeignKey(Country, blank=True, null=True, verbose_name='Собрано в')
 
-    purchase_date = models.DateField(blank=True, null=True)
-    store = models.ForeignKey(Store, blank=True, null=True)
-    warranty = models.SmallIntegerField(blank=True, null=True, help_text='месяцев')
-    serialnumber = models.CharField(max_length=128, blank=True, null=True, verbose_name='Serial')
-    description = models.TextField(blank=True)
-    price_uah = models.DecimalField(max_digits=8, decimal_places=2, help_text='Стоимость в грн', blank=True, null=True)
+    purchase_date = models.DateField(blank=True, null=True, verbose_name='Дата покупки')
+    store = models.ForeignKey(Store, blank=True, null=True, verbose_name='Куплено в')
+    warranty = models.SmallIntegerField(blank=True, null=True, help_text='месяцев', verbose_name='Гарания')
+    serialnumber = models.CharField(max_length=128, blank=True, null=True, verbose_name='Серийный номер')
+    description = models.TextField(blank=True, verbose_name='Примечания')
+    price_uah = models.DecimalField(max_digits=8, decimal_places=2, help_text='Стоимость в грн', blank=True, null=True, verbose_name='Стоимость, грн')
     price_usd = models.DecimalField(max_digits=8, decimal_places=2, help_text='Это поле используется как help_text для поля price_uah на странице редактирования Компонента', blank=True, null=True)
     # deprecated price_uah = models.IntegerField(help_text='Стоимость в грн', blank=True, null=True)
     # deprecated price_usd = models.IntegerField(help_text='Ориентировачная стоимость в USD на момент покупки', blank=True, null=True)
-    iscash = models.BooleanField(help_text='Оплачено наличными', default=False)
+    iscash = models.BooleanField(default=False, verbose_name='Оплачено наличными')
     invoice = models.CharField(max_length=64, verbose_name='Номер счета', blank=True)
     product_page = models.URLField(blank=True, verbose_name='URL на страницу продукта')
 
-    data = hstore.DictionaryField(blank=True)  # can pass attributes like null, blank, etc.
+    data = hstore.DictionaryField(blank=True, verbose_name='Характеристики изделия')  # can pass attributes like null, blank, etc.
 
     def load_properties(self):
         """

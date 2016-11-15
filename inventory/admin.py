@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.utils.html import format_html
 from mptt.admin import MPTTModelAdmin
 from inventory.models import Store, Container, Computer
 from inventory.models import Component
@@ -11,6 +12,7 @@ from inventory.models import SpareType
 from inventory.models import Property
 from inventory.models import Manufacture
 from inventory.models import Image
+from inventory.models import Country
 from .forms import ImageForm
 from .utils import add_months
 
@@ -50,6 +52,7 @@ class ComponentAdminInline(admin.StackedInline):
     # def has_delete_permission(self, request, obj=None):
     #     return False
 
+
 class ContainerMPTTAdmin(MPTTModelAdmin):
     # specify pixel amount for this ModelAdmin only:
     mptt_level_indent = 20
@@ -69,6 +72,7 @@ class ContainerMPTTAdmin(MPTTModelAdmin):
         if db_field.name == 'parent':
             kwargs["queryset"] = Container.objects.exclude(kind='PC')
             return super(ContainerMPTTAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
 
 class ComputerMPTTAdmin(admin.ModelAdmin):
     inlines = (ComponentAdminInline, )
@@ -189,7 +193,6 @@ class ComponentAdmin(admin.ModelAdmin):
         return form
 
     def link_to_parent_computer(self, instance):
-        from django.utils.html import format_html
         ancestor = instance.container.id
         url = reverse("admin:inventory_computer_change", args=[ancestor])
         computer = instance.container.name
@@ -198,10 +201,10 @@ class ComponentAdmin(admin.ModelAdmin):
     #link_to_parent_computer.short_description = "Link to parent computer"
 
     list_display=['name', 'sparetype', 'container']  # это поля в виде списка
-    fields = ['link_to_parent_computer', 'name', 'container', 'sparetype', 'brand', 'model', 'manufacturing_date', 'store',
-              'purchase_date', 'warranty', 'serialnumber', 'description', 'price_uah', 'iscash', 'invoice',
-              'product_page', 'data'] # это поля для формы редактирования. Перечисление всех полей необходимо для того,
-                                      # чтобы поле link_to_parent_computer было в начале списка.
+    fields = ['link_to_parent_computer', 'name', 'container', 'sparetype', 'brand', 'model', 'manufacturing_date',
+              'assembled', 'store', 'purchase_date', 'warranty', 'serialnumber', 'description', 'price_uah', 'iscash',
+              'invoice', 'product_page', 'data'] # это поля для формы редактирования. Перечисление всех полей необходимо для того,
+                                                 # чтобы поле link_to_parent_computer было в начале списка.
 
     readonly_fields  = ['link_to_parent_computer']
     ordering = ['sparetype']
@@ -216,3 +219,4 @@ admin.site.register(Component, ComponentAdmin)
 admin.site.register(SpareType, SpareTypeAdmin)
 admin.site.register(Store)
 admin.site.register(Manufacture)
+admin.site.register(Country)
